@@ -703,8 +703,8 @@ def plotNewCasesByCountry(csvpath=r'./data/'):
         print('Read date record error:',dateBefore)
         return
     
-    #print(pdDate.head())
-    #print(pdDateBefore.head())
+    print(pdDate.head())
+    print(pdDateBefore.head())
     # print(pdDate.index)
     # print(pdDateBefore.index)
     # print(pdDate.index == pdDateBefore.index )
@@ -1036,6 +1036,6 @@ if __name__ == '__main__':
     #plotChangeBydata(csvpath)
     #plotWorldStatConfirmCaseByTime()
     #plotWorldStatisticByTime()
-    #plotNewCasesByCountry(csvpath)
-    plotCountriesInfo(csvpath)
+    plotNewCasesByCountry(csvpath)
+    #plotCountriesInfo(csvpath)
     
