@@ -6,14 +6,17 @@
 #python .\mainNZ.py
 #"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 import sys
+
 sys.path.append("..")
-from lxml import etree
 import datetime
-import pandas as pd
-import numpy as np
+
 import matplotlib.pyplot as plt
-from plotCoronavirous import gSaveBasePath,downloadFile
+import numpy as np
+import pandas as pd
 from common.getHtml import openUrl, openUrlUrlLib
+from lxml import etree
+
+from plotCoronavirous import downloadFile, gSaveBasePath
 
 #reference: https://www.health.govt.nz/our-work/diseases-and-conditions/covid-getDataFileFromWeb19-novel-coronavirus/covid-19-current-situation/covid-19-current-cases
 #https://www.health.govt.nz/system/files/documents/pages/covid-cases-24july20.xlsx
@@ -26,7 +29,8 @@ def getDataFileFromWeb(url=url):
     #print(html)
     html = etree.HTML(html)
     #X = '//*[@id="node-10866"]/div/div/div/ul[2]/li[1]/a'
-    X = '//*[@id="node-10866"]/div[2]/div/div/p[13]/a'
+    #X = '//*[@id="node-10866"]/div[2]/div/div/p[13]/a'
+    X = '//*[@id="case-details-csv-file"]'
     #X = '//table'
     res = html.xpath(X)
     #print(len(res), res)
