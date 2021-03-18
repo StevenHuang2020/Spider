@@ -12,6 +12,8 @@ Please note that this is not necessarily the correct definition.<br/>
 Data Reference: <br/>
  - https://google.com/covid19-map/ <br/>
  - https://github.com/owid/covid-19-data/blob/master/public/data/owid-covid-data.csv <br/>
+ - For detailed statistics of covid-19 in NZ, please refer to [here.](https://www.health.govt.nz/our-work/diseases-and-conditions/covid-19-novel-coronavirus/covid-19-data-and-statistics/covid-19-case-demographics )
+
 
 COVID-19 Datasets:<br/>
  - World data: [./coronavirus/data](https://github.com/StevenHuang2020/COVID-19-Statistics/tree/master/coronavirus/data) <br/>
@@ -38,10 +40,7 @@ Using lxml to get data from the website.
 <br/>
 
 #### main_v1.2.py
-Using selenium to crawl data.
-
-<br/>
-For detailed statistics of covid-19 in NZ, please refer to [here.](https://www.health.govt.nz/our-work/diseases-and-conditions/covid-19-novel-coronavirus/covid-19-data-and-statistics/covid-19-case-demographics )
+Using selenium to crawl data.<br/>
 
 #### main_v1.3.py
 Updated to adapt the new google page.<br/>
