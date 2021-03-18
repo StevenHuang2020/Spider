@@ -41,8 +41,7 @@ Using lxml to get data from the website.
 Using selenium to crawl data.
 
 <br/>
-For detailed statistics of covid-19 in NZ, please refer to 
-[here.](https://www.health.govt.nz/our-work/diseases-and-conditions/covid-19-novel-coronavirus/covid-19-data-and-statistics/covid-19-case-demographics )
+For detailed statistics of covid-19 in NZ, please refer to [here.](https://www.health.govt.nz/our-work/diseases-and-conditions/covid-19-novel-coronavirus/covid-19-data-and-statistics/covid-19-case-demographics )
 
 #### main_v1.3.py
 Updated to adapt the new google page.<br/>
