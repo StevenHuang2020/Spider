@@ -21,6 +21,11 @@ COVID-19 Datasets:<br/>
 Please report any bugs [here.](https://github.com/StevenHuang2020/COVID-19-Statistics/issues)<br/>
 
 Usage: <br/>
+1）Requirements: 
+pip install -r requirements.txt<br/>
+2）Download the proper version of [chromdriver.exe](https://chromedriver.chromium.org/downloads)
+then put it into your python install path(.\python36\Scripts\).
+
 |CMD|Description|
 |---|---|
 |python main_v1.3.py|#visualize world covid-19 statistics|
@@ -34,9 +39,7 @@ Using lxml to get data from the website.
 
 #### main_v1.2.py
 Using selenium to crawl data.
-Requirements: pip install selenium. <br/>
-Download the proper version of [chromdriver.exe](https://chromedriver.chromium.org/downloads)
-then put it into your python install path(.\python36\Scripts\).
+
 <br/>
 For detailed statistics of covid-19 in NZ, please refer to 
 [here.](https://www.health.govt.nz/our-work/diseases-and-conditions/covid-19-novel-coronavirus/covid-19-data-and-statistics/covid-19-case-demographics )
