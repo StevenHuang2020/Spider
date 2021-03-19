@@ -6,7 +6,13 @@
 ![Tensorflow Version](https://img.shields.io/badge/Tensorflow-V2.2.0-brightgreen)
 ![Last update](https://img.shields.io/endpoint?color=brightgreen&style=flat-square&url=https%3A%2F%2Fraw.githubusercontent.com%2FStevenHuang2020%2FWebSpider%2Fmaster%2Fcoronavirus%2Fupdate.json)
 
+## 📝 Contents
+- [Reference](#Reference)
+- [Usage](#Usage)
+- [History](#History)
+- [Result](#Result)
 
+## Reference
 The added mortality column calculated by  this: df['Deaths'] / df['Confirmed'].<br/>
 Please note that this is not necessarily the correct definition.<br/>
 Data Reference: <br/>
@@ -20,9 +26,8 @@ COVID-19 Datasets:<br/>
  - Country data: [./coronavirus/dataCountry](https://github.com/StevenHuang2020/COVID-19-Statistics/tree/master/coronavirus/dataCountry) <br/>
  - NZ data: [./coronavirus/NZ](https://github.com/StevenHuang2020/COVID-19-Statistics/tree/master/coronavirus/NZ) <br/>
 
-Please report any bugs [here.](https://github.com/StevenHuang2020/COVID-19-Statistics/issues)<br/>
 
-Usage: <br/>
+## Usage
 1）Requirements: 
 pip install -r requirements.txt<br/>
 2）Download the proper version of [chromdriver.exe](https://chromedriver.chromium.org/downloads)
@@ -34,17 +39,17 @@ then put it into your python install path(.\python36\Scripts\).
 |python mainNZ.py |#visualize New Zealand covid-19 statistics|
 |python predictStatistics.py|#predict world covid-19 cases |
 
+Please report any bugs [here.](https://github.com/StevenHuang2020/COVID-19-Statistics/issues)<br/>
 
-#### main_v1.0.py
-Using lxml to get data from the website.
-<br/>
-
-#### main_v1.2.py
+## History
+- main_v1.0.py <br/>
+Using lxml to get data from the website.<br/>
+- main_v1.2.py <br/>
 Using selenium to crawl data.<br/>
-
-#### main_v1.3.py
+- main_v1.3.py <br/>
 Updated to adapt the new google page.<br/>
 
+## Result
 |||
 |---|---|
 |<img src="images/nc1.png" width="320" height="240" />|<img src="images/nd2.png" width="320" height="240" />|
