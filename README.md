@@ -30,7 +30,7 @@ COVID-19 Datasets:<br/>
 ## Usage
 1）Requirements: 
 pip install -r requirements.txt<br/>
-2）Download the proper version of [chromdriver.exe](https://chromedriver.chromium.org/downloads)
+2）Download the right version of [chromdriver.exe](https://chromedriver.chromium.org/downloads)
 then put it into your python install path(.\python36\Scripts\).
 
 |CMD|Description|
