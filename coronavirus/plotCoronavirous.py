@@ -1036,6 +1036,6 @@ if __name__ == '__main__':
     #plotChangeBydata(csvpath)
     #plotWorldStatConfirmCaseByTime()
     #plotWorldStatisticByTime()
-    plotNewCasesByCountry(csvpath)
-    #plotCountriesInfo(csvpath)
+    #plotNewCasesByCountry(csvpath)
+    plotCountriesInfo(csvpath)
     
