@@ -12,7 +12,7 @@
 - [History](#History)
 - [Result](#Result)
 
-## Reference
+## References
 The added mortality column calculated by  this: df['Deaths'] / df['Confirmed'].<br/>
 Please note that this is not necessarily the correct definition.<br/>
 Data Reference: <br/>
