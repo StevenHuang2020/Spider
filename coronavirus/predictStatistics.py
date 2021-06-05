@@ -8,7 +8,7 @@ import math
 import os 
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' #not print tf debug info
-#plt.rcParams['savefig.dpi'] = 300 #matplot figure quality when save
+plt.rcParams['savefig.dpi'] = 300 #matplot figure quality when save
 
 from tensorflow.keras import optimizers
 from tensorflow.keras.models import Sequential
@@ -17,7 +17,7 @@ from sklearn.preprocessing import MinMaxScaler,StandardScaler
 from sklearn.metrics import mean_squared_error
 from sklearn.model_selection import train_test_split, cross_val_score
 
-from plotCoronavirous import binaryDf,gCovidCsv,pathsFiles
+from plotCoronavirous import binaryDf,pathsFiles
 from jsonUpdate import getDataTime
 
 gScaler = MinMaxScaler() #StandardScaler() #
@@ -45,23 +45,15 @@ def create_dataset(dataset, look_back=1):
         dataY.append(dataset[i + look_back])
     return np.array(dataX), np.array(dataY)
     
-def getDataSet():
-    if 0:
-        dataset = pd.read_csv('total-cases-covid-19.csv')
-        dataset = dataset[dataset['Entity'] == 'World' ]
-        dataset = dataset.rename(columns={"Total confirmed cases of COVID-19 (cases)": "Cases"})
-        print(dataset.head())
-        dataset = dataset.iloc[:, [2,3]]
-        #dataset = dataset['Date', 'Cases']
-    else:
-        dataset = pd.read_csv('owid-covid-data.csv')
-        #dataset = pd.read_csv(file,sep=',', encoding='utf-8')
-        dataset = dataset[dataset['location'] == 'World' ]
-        #dataset = dataset.rename(columns={"Total confirmed cases of COVID-19 (cases)": "Cases"})
-        print(dataset.head())
-        dataset = dataset.loc[:, ['date','total_cases']]
-        dataset = dataset.rename(columns={'date':'Date', "total_cases": "Cases"})
-        #dataset = dataset['Date', 'Cases']
+def getDataSet(file=r'.\OurWrold\owid-covid-data.csv'):
+    dataset = pd.read_csv(file)
+    #dataset = pd.read_csv(file,sep=',', encoding='utf-8')
+    dataset = dataset[dataset['location'] == 'World' ]
+    #dataset = dataset.rename(columns={"Total confirmed cases of COVID-19 (cases)": "Cases"})
+    print(dataset.head())
+    dataset = dataset.loc[:, ['date','total_cases']]
+    dataset = dataset.rename(columns={'date':'Date', "total_cases": "Cases"})
+    #dataset = dataset['Date', 'Cases']
         
     dataset = dataset.dropna()
     
@@ -134,9 +126,9 @@ def plotPredictFuture(model,trainY,index,data):
 
     startIndex = index[-1]
     #sD=datetime.datetime.strptime(startIndex,'%b %d, %Y')
-    sD=datetime.datetime.strptime(startIndex,'%Y-%m-%d')
-    newIndex=[]
+    sD=datetime.datetime.strptime(startIndex,'%m/%d/%y') #'%Y-%m-%d'
     
+    newIndex=[]
     startIndex = datetime.datetime.strftime(sD,'%m/%d/%Y')
     newIndex.append(startIndex)
     for i in range(Number):
@@ -225,7 +217,7 @@ def prepareDataset(dataset,look_back):
 def train(dataset):
     look_back = 1
     x_train, y_train, index,rawdata = prepareDataset(dataset,look_back)
-    
+
     model = createModel(look_back)
     model.fit(x_train, y_train, epochs=500, batch_size=150, verbose=2) #500
     
@@ -319,9 +311,9 @@ def predict():
     datasetToday = getDataSet()
     train(datasetToday)
 
-    file = getNewestFile(r'.\dataPredict',index=-4) #compare last time predict 
-    print('Last predicted file:',file)
-    evaulatePredition(datasetToday, file)
+    #file = getNewestFile(r'.\dataPredict',index=-4) #compare last time predict 
+    #print('Last predicted file:',file)
+    #evaulatePredition(datasetToday, file)
     
 def main():
     predict()

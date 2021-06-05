@@ -6,17 +6,18 @@
 #python .\mainNZ.py
 #"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 import sys
-
+import os
 sys.path.append("..")
 import datetime
-
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from common.getHtml import openUrl, openUrlUrlLib
+from common.getHtml import openUrl,openUrlUrlLib,downWebFile
 from lxml import etree
 
-from plotCoronavirous import downloadFile, gSaveBasePath
+from plotCoronavirous import gSaveBasePath,readCsv
+
+plt.rcParams['figure.dpi'] = 120 #high resolution
 
 #reference: https://www.health.govt.nz/our-work/diseases-and-conditions/covid-getDataFileFromWeb19-novel-coronavirus/covid-19-current-situation/covid-19-current-cases
 #https://www.health.govt.nz/system/files/documents/pages/covid-cases-24july20.xlsx
@@ -53,18 +54,18 @@ def readExcel(file,sheetname=0,header=2,verbose=False):
         #print('df.dtypes = ',df.dtypes)
     return df
 
-def readCSV(file,sheetname=0,header=0,verbose=False):
-    df = pd.read_csv(file,header=header)
-    #print(type(df),'df.shape=',df.shape)
-    if verbose:
-        print(df.describe().transpose())
-        print(df.head())
-        #df.set_index(["Location"], inplace=True)
-        print('df.columns=',df.columns)
-        print('df.dtypes = ',df.dtypes)
-        #df = df.apply(pd.to_numeric, axis=0)
-        #print('df.dtypes = ',df.dtypes)
-    return df
+# def readCSV(file,sheetname=0,header=0,verbose=False):
+#     df = pd.read_csv(file,header=header)
+#     #print(type(df),'df.shape=',df.shape)
+#     if verbose:
+#         print(df.describe().transpose())
+#         print(df.head())
+#         #df.set_index(["Location"], inplace=True)
+#         print('df.columns=',df.columns)
+#         print('df.dtypes = ',df.dtypes)
+#         #df = df.apply(pd.to_numeric, axis=0)
+#         #print('df.dtypes = ',df.dtypes)
+#     return df
 
 def plotStatistcs(df,title,label):
     fontsize = 7
@@ -258,30 +259,31 @@ def plotNZDataChange(df):
     
 def getNZCovid19():
     #file=r'.\NZ\covid-cases-24july20.xlsx'
-    file = getDataFileFromWeb()
-    if file is None:
+    fileUrl = getDataFileFromWeb()
+    if fileUrl is None:
         print(r"Can't find the file, something wrong!")
         return None
     
-    name = file[file.rfind('/')+1:]
-    print(file,'name=',name)
-    res = downloadFile(file,r'./NZ')
+    name = fileUrl[fileUrl.rfind('/')+1:]
+    print(fileUrl,'name=',name)
+    file = os.path.join(r'./NZ/', name)
+    res = downWebFile(fileUrl, file)
     if not res:
         print(r"Download file failed, please check the real url!")
         return None
     
-    excel = r'./NZ'+'/'+name
+    #excel = r'./NZ'+'/'+name
     #dfConfirmed = readExcel(excel,'Confirmed') #'Probable'
-    return readCSV(excel)
+    return readCsv(file)
     
 def plotStatistic(df):
-    parseConfirmed(df)
-    plotNZDataChange(df)
-    
+    if df is not None:
+        parseConfirmed(df)
+        plotNZDataChange(df)
+        
 def main():
     df = getNZCovid19()
-    if df is not None:
-        plotStatistic(df)
+    plotStatistic(df)
     
 if __name__ == '__main__':
     main()

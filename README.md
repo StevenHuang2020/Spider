@@ -10,7 +10,7 @@
 - [Reference](#Reference)
 - [Usage](#Usage)
 - [History](#History)
-- [Result](#Result)
+- [Statistics](#Statistics)
 
 ## References
 The added mortality column calculated by  this: df['Deaths'] / df['Confirmed'].<br/>
@@ -38,6 +38,7 @@ then put it into your python install path(.\python36\Scripts\).
 |python main_v1.3.py|#visualize world covid-19 statistics|
 |python mainNZ.py |#visualize New Zealand covid-19 statistics|
 |python predictStatistics.py|#predict world covid-19 cases |
+|python plotVaccinations.py|#plot world covid-19 vaccinations |
 
 Please report any bugs [here.](https://github.com/StevenHuang2020/COVID-19-Statistics/issues)<br/>
 
@@ -49,7 +50,15 @@ Using selenium to crawl data.<br/>
 - main_v1.3.py <br/>
 Updated to adapt the new google page.<br/>
 
-## Result
+## Statistics
+
+### Vaccinations<br/>
+|||
+|---|---|
+|<img src="images/World_vaccinatedPerHundred.png" width="320" height="240" />|<img src="images/World_vaccinated.png" width="320" height="240" />|
+|<img src="images/World_vaccinatedNew.png" width="320" height="240" />|<img src="images/World_vaccinatedTotal.png" width="320" height="240" />|
+
+### Cases<br/>
 |||
 |---|---|
 |<img src="images/nc1.png" width="320" height="240" />|<img src="images/nd2.png" width="320" height="240" />|
@@ -61,7 +70,7 @@ Updated to adapt the new google page.<br/>
  
 <br/>
 
-### Statistics cases by time <br/>
+### Cases by time <br/>
 
 |||
 |---|---|
@@ -77,7 +86,7 @@ Updated to adapt the new google page.<br/>
 |<img src="images/WorldChange_case_per1M_people.png" width="320" height="240" />|<img src="images/WorldChange_all.png" width="320" height="240" />|
 <br/>
 
-### World Prediction
+### World cases Prediction
 The world predicted confirmed cases by using LSTM algorithm.<br/>
 Data Source reference: https://ourworldindata.org/covid-cases<br/>
 <br/>

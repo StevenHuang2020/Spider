@@ -7,6 +7,7 @@
 #python main.py
 """""""""""""""""""""""""""""""""""""""""""""""""""""
 import sys
+import os
 sys.path.append("..")
 import datetime
 import pandas as pd
@@ -26,7 +27,7 @@ def writeToCsv(df):
     t = str(today) + '_' + str(daytime.__format__('%H%M%S'))
     
     #file='coronavirous.csv'
-    file = base + 'coronavirous_' + t + '.csv'
+    file = os.path.join(base, 'coronavirous_' + t + '.csv')
     df.to_csv(file,index=True)
           
 def preprocessData(df):

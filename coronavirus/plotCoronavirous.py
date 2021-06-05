@@ -9,18 +9,22 @@ import os
 import datetime
 import pandas as pd
 import numpy as np
+import matplotlib
 import matplotlib.pyplot as plt
 from matplotlib import cm
 from progressBar import SimpleProgressBar
 #from mainNZ import getNZCovid19
-from common.getHtml import downWebFile
+
+#matplotlib.rcParams['figure.dpi'] = 300 #high resolution
 
 gSaveBasePath=r'.\images\\'
 gSaveChangeData=r'.\dataChange\\'
 gSaveCountryData=r'.\dataCountry\\'
-gCovidCsv = 'https://raw.githubusercontent.com/owid/covid-19-data/master/public/data/owid-covid-data.csv' 
 
-
+def createPath(dirs):
+    if not os.path.exists(dirs):
+        os.makedirs(dirs)
+        
 def plotData(df, number=25):    
     if number>df.shape[0]:
         number = df.shape[0]
@@ -121,9 +125,9 @@ def plotData(df, number=25):
     plotChangeBydata(fontsize = fontsize)
     #plotWorldStatConfirmCaseByTime()
     #plotWorldStatDeathsByTime()
-    plotWorldStatisticByTime()
     plotNewCasesByCountry()
     plotCountriesInfo()
+    plotWorldStatisticByTime()
     #getNZCovid19()
     
 def binaryDf(df,labelAdd=True):
@@ -501,29 +505,23 @@ def getWorldDf(csvpath):
             
     #print(df.head())    
     return df
- 
-def downloadFile(url,dstPath):
-    fileName = url[url.rfind("/")+1:]
-    print('Start file download:', url,'file:',fileName,'dst=',dstPath)
-    
-    if dstPath[-1] == '/':
-        dst = dstPath + fileName
-    else:
-        dst = dstPath + "/" + fileName
+  
+def getVaccinesFile(file, dstVaccineFile):
+    df = readCsv(file)
+    #df = df[df['location'] == 'World' ]
+    #print('columns=', df.columns, type(df.columns))
+    #vaccineColumns=['location', 'continent', 'iso_code','date','total_vaccinations']
+    vaccineColumns=['location', 'continent', 'iso_code','date','total_vaccinations','people_vaccinated','people_fully_vaccinated',\
+        'new_vaccinations','total_vaccinations_per_hundred','people_vaccinated_per_hundred',\
+        'people_fully_vaccinated_per_hundred']
 
-    print('url=',url)
-    #print('filename=',fileName)
-    #print('dst=',dst)
-    #wget.download(url, out=dst)
-    return downWebFile(url,dst)
+    dfVacc = df.loc[:, vaccineColumns]
+    dfVacc.set_index(["date"], inplace=True)
+    print(dfVacc.head())
+    dfVacc.to_csv(dstVaccineFile, index=True)
     
-def plotWorldStatisticByTime(csvpath=r'./'):   
-    fileName = 'owid-covid-data.csv'
-    if os.path.exists(fileName):
-        os.remove(fileName) 
-    downloadFile(gCovidCsv, r'.')
-    
-    df = readCsv(gCovidCsv)
+def plotWorldStatisticByTime(file=r'./OurWrold/owid-covid-data.csv'):      
+    df = readCsv(file)
     df = df[df['location'] == 'World' ]
     
     dfWorld = df.loc[:,['date','total_cases','new_cases','total_deaths','new_deaths']]
@@ -549,103 +547,6 @@ def plotWorldStatisticByTime(csvpath=r'./'):
     plotPdColumn(dfWorldNew.index,dfWorldNew['new_deaths'],title=title,label='RecentNewDeaths',color='r')
     plt.show()
     
-'''
-def plotWorldStatisticByTime2(csvpath=r'./data/'):
-    dfWorld = getWorldDf(csvpath)
-    dfWorld.set_index(["Date"], inplace=True)
-    
-    dfNewCases = [0]
-    for i in range(dfWorld.shape[0] -1):
-        numberI = dfWorld.iloc[i,1]
-        numberINext = dfWorld.iloc[i+1,1]
-        newCases = numberINext-numberI
-        #print(numberI,numberINext,newCases)
-        dfNewCases.append(newCases)
-    
-    #print(dfWorld.shape,len(dfNewCases))
-    dfWorld.insert(2, "newCases", dfNewCases, True) 
-    #print(dfWorld.head())   
-    #print(dfWorld)
-    
-    newRecentDays = 30
-    dfWorldNew = dfWorld.iloc[-1-newRecentDays:-1, :]
-    dfWorld = dfWorld.iloc[::3] # even #dfWorld.iloc[1::2] #odd
-    
-    plotPdColumn(dfWorld.index,dfWorld['Confirmed'],title='World COVID-19 Confirmed',label='Confirmed')
-    plotPdColumn(dfWorldNew.index,dfWorldNew['newCases'],title='World COVID-19 Recent NewCases',label='recentNewCases',color='y')
-    plotPdColumn(dfWorld.index,dfWorld['newCases'],title='World COVID-19 NewCases',label='newCases',color='y')
-    
-def plotWorldStatDeathsByTime(csvpath=r'./'):
-    csv = csvpath + 'total-deaths-covid-19.csv'
-    df = readCsv(csv)
-    df = df[df['Entity'] == 'World' ]
-    df = df.rename(columns={"Total confirmed deaths due to COVID-19 (deaths)": "Deaths"})
-    #print(df.head())
-    
-    data = {'Date':df['Date'], 'Deaths': df['Deaths']}
-    dfWorld = pd.DataFrame(data=data)
-    dfWorld.set_index(["Date"], inplace=True)
-    
-    dfNewDeaths = [0]
-    for i in range(len(dfWorld['Deaths']) -1):
-        numberI = dfWorld.iloc[i,0]
-        numberINext = dfWorld.iloc[i+1,0]
-        newCases = numberINext-numberI
-        #print(numberI,numberINext,newCases)
-        dfNewDeaths.append(newCases)
-        
-    #print(len(dfNewCases))
-    dfWorld['newDeaths'] = dfNewDeaths
-    print(dfWorld.head())
-    
-    newRecentDays = 30
-    dfWorldNew = dfWorld.iloc[-1-newRecentDays:-1, :]
-    dfWorld = dfWorld.iloc[::3]
-    dfWorld = binaryDf(dfWorld,False) #drop half
-    
-    plotPdColumn(dfWorld.index,dfWorld['Deaths'],title='World COVID-19 Deaths',label='Deaths',color='r')
-    plotPdColumn(dfWorld.index,dfWorld['newDeaths'],title='World COVID-19 NewDeaths',label='NewDeaths',color='r')
-    plotPdColumn(dfWorldNew.index,dfWorldNew['newDeaths'],title='World COVID-19 Recent NewDeaths',label='RecentNewDeaths',color='r')
-
-def plotWorldStatConfirmCaseByTime(csvpath=r'./'):
-    csv = csvpath + 'total-cases-covid-19.csv'
-    df = readCsv(csv)
-    df = df[df['Entity'] == 'World' ]
-    df = df.rename(columns={"Total confirmed cases of COVID-19 (cases)": "Cases"})
-    #print(df.head())
-    
-    data = {'Date':df['Date'], 'Cases': df['Cases']}
-    dfWorld = pd.DataFrame(data=data)
-    dfWorld.set_index(["Date"], inplace=True)
-    #print(dfWorld.tail())
-    #print(dfWorld['Cases'].shape)
-    #print(dfWorld['Cases'])
-    
-    dfNewCases = [0]
-    for i in range(len(dfWorld['Cases']) -1):
-        numberI = dfWorld.iloc[i,0]
-        numberINext = dfWorld.iloc[i+1,0]
-        newCases = numberINext-numberI
-        #print(numberI,numberINext,newCases)
-        dfNewCases.append(newCases)
-        
-    #print(len(dfNewCases))
-    dfWorld['newCases'] = dfNewCases
-    #print(dfWorld.head())
-    #print(dfWorld.index)
-    
-    newRecentDays = 30
-    dfWorldNew = dfWorld.iloc[-1-newRecentDays:-1, :]
-    dfWorld = dfWorld.iloc[::3] # even #dfWorld.iloc[1::2] #odd
-    #print(dfWorldNew.shape)
-    #print(dfWorld.shape)
-    
-    dfWorld = binaryDf(dfWorld,False) #drop half
-    
-    plotPdColumn(dfWorld.index,dfWorld['Cases'],title='World COVID-19 Cases',label='Cases')
-    plotPdColumn(dfWorld.index,dfWorld['newCases'],title='World COVID-19 NewCases',label='NewCases')
-    plotPdColumn(dfWorldNew.index,dfWorldNew['newCases'],title='World COVID-19 Recent NewCases',label='RecentNewCases')
-'''
 
 def getAlldateRecord(csvpath, date='2020-06-16'):
     for i in pathsFiles(csvpath,'csv'):
@@ -1035,7 +936,7 @@ if __name__ == '__main__':
     #readCsv(csvpath+'coronavirous_2020-07-02_110250.csv')
     #plotChangeBydata(csvpath)
     #plotWorldStatConfirmCaseByTime()
-    #plotWorldStatisticByTime()
+    plotWorldStatisticByTime(r'./OurWrold/owid-covid-data.csv')
     #plotNewCasesByCountry(csvpath)
-    plotCountriesInfo(csvpath)
+    #plotCountriesInfo(csvpath)
     

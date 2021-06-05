@@ -6,16 +6,24 @@
 #python .\main_v1.3.py
 """""""""""""""""""""""""""""""""""""""""""""""""""""
 import datetime
+import os
 import pandas as pd
 from selenium import webdriver
 from time import sleep
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
 import argparse 
-from main_v1 import plotData,preprocessData
+from main_v1 import preprocessData
+
 #from predictStatistics import predict
+from common.getHtml import downWebFile
+from plotCoronavirous import plotData, createPath
+from plotCoronavirous import plotWorldStatisticByTime, getVaccinesFile
 
 mainUrl = 'https://google.com/covid19-map/'
+
+#data source: https://ourworldindata.org/covid-vaccinations?country=OWID_WRL
+gCovidCsv = 'https://raw.githubusercontent.com/owid/covid-19-data/master/public/data/owid-covid-data.csv' 
 
 def parseXpathTr(tr,columns):
     location,confirmed,NewCases,Case_Per_1M_people,deaths = '','','','',''
@@ -115,10 +123,18 @@ def Load(url):
   
     print('df.shape=', df.shape)
     return preprocessData(df)
+        
+def downloadOurWorldData():
+    csvpath = r'./OurWrold/'
+    createPath(csvpath)
+    file = os.path.join(csvpath, 'owid-covid-data.csv')
+    #downWebFile(gCovidCsv, file)
+    fileVacc = os.path.join(csvpath, 'vaccinations.csv')
+    getVaccinesFile(file, fileVacc)
     
 def argCmdParse():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-n', '--noplot', action="store_true", help = 'not plot data')
+    parser.add_argument('-n', '--noplot', action="store_true", help = 'only download data, not plot it')
     return parser.parse_args()
 
 if __name__ == '__main__':
@@ -128,6 +144,10 @@ if __name__ == '__main__':
         plot = False
     print('plot=',plot)
     
-    df = Load(mainUrl)
+    downloadOurWorldData()
+    
+    df = Load(mainUrl) #from google data
     if plot:
         plotData(df,60)
+
+    
