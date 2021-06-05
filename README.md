@@ -1,6 +1,8 @@
 # COVID-19 Statistics
+<!--
 ![GitHub Stars](https://img.shields.io/github/stars/StevenHuang2020/WebSpider?label=Stars&style=social)
 ![GitHub watchers](https://img.shields.io/github/watchers/StevenHuang2020/WebSpider?label=Watch) 
+-->
 ![License: MIT](https://img.shields.io/badge/License-MIT-blue)
 ![Python Version](https://img.shields.io/badge/Python-v3.6-blue)
 ![Tensorflow Version](https://img.shields.io/badge/Tensorflow-V2.2.0-brightgreen)
