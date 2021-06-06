@@ -17,7 +17,8 @@ from main_v1 import preprocessData
 
 #from predictStatistics import predict
 from common.getHtml import downWebFile
-from plotCoronavirous import plotData, createPath
+from plotCoronavirous import plotData
+from commonPath import createPath
 from plotCoronavirous import plotWorldStatisticByTime, getVaccinesFile
 
 mainUrl = 'https://google.com/covid19-map/'

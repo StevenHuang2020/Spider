@@ -64,8 +64,7 @@ def getDataSet(file=r'.\OurWrold\owid-covid-data.csv'):
     print(dataset.dtypes)
     return dataset
 
-def plotData(ax,x,y,label=''):
-    fontsize = 5
+def plotDataAx(ax,x,y,label='', fontsize = 5):
     ax.plot(x,y,label=label)
     #ax.set_aspect(1)
     ax.legend()
@@ -106,8 +105,8 @@ def plotPredictCompare(model,trainX,index,data):
     plt.figure(figsize=(12,10))
     ax = plt.subplot(1,1,1)
     plt.title('PredictTime: ' + getDataTime())
-    plotData(ax,index[offset+2:-1],data[offset+2:-1],'True Data')
-    plotData(ax,index[offset+2:-1],trainPredict[offset+1:-1],'Prediction')
+    plotDataAx(ax,index[offset+2:-1],data[offset+2:-1],'True Data')
+    plotDataAx(ax,index[offset+2:-1],trainPredict[offset+1:-1],'Prediction')
     plt.savefig(gSaveBasePath + 'WorldPredictCompare.png')
     plt.show()
  
@@ -157,10 +156,10 @@ def plotPredictFuture(model,trainY,index,data):
        
     ax = plt.gca()
     #ax = plt.subplot(1,1,1)
-    plotData(ax,index[offset:],data[offset:],'Now cases')
+    plotDataAx(ax,index[offset:],data[offset:],'Now cases')
     
     newIndex = changeNewIndexFmt(newIndex)
-    plotData(ax,newIndex,pred,'Predicted cases')
+    plotDataAx(ax,newIndex,pred,'Predicted cases')
     #print('oldIndex=',index[offset:])
     #print('newIndex=',newIndex)
     

@@ -21,10 +21,6 @@ gSaveBasePath=r'.\images\\'
 gSaveChangeData=r'.\dataChange\\'
 gSaveCountryData=r'.\dataCountry\\'
 
-def createPath(dirs):
-    if not os.path.exists(dirs):
-        os.makedirs(dirs)
-        
 def plotData(df, number=25):    
     if number>df.shape[0]:
         number = df.shape[0]
