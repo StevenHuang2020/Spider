@@ -59,8 +59,8 @@ Updated to adapt the new google page.<br/>
 |---|---|
 |<img src="images/World_vaccinatedPerHundred.png" width="320" height="240" />|<img src="images/World_vaccinated.png" width="320" height="240" />|
 |<img src="images/World_vaccinatedNew.png" width="320" height="240" />|<img src="images/World_vaccinatedTotal.png" width="320" height="240" />|
-|<img src="images/World_vaccineFully_top.png" width="320" height="240" />|<img src="images/World_peopleVaccined_top.png" width="320" height="240" />|
-|<img src="images/World_vaccinePerH_top.png" width="320" height="240" />|<img src="images/World_vaccineContinent.png" width="320" height="240" />|
+|<img src="images/World_vaccineFully_top.png" width="320" height="240" />|<img src="images/World_vaccinePerH_top.png" width="320" height="240" />|
+|<img src="images/World_peopleVaccined_top.png" width="320" height="240" />|<img src="images/World_vaccineContinent.png" width="320" height="240" />|
 |<img src="images/probVaccine.png" width="320" height="240" />|<img src="images/probVaccineT.png" width="320" height="240" />|
 
 

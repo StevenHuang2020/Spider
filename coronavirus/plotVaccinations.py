@@ -13,11 +13,11 @@ from plotCoronavirous import readCsv, gSaveBasePath,binaryDf
 from predictStatistics import plotDataAx
 from commonPath import createPath,getFileName,pathsFiles
 
-SMALL_SIZE = 6
+SMALL_SIZE = 8
 MEDIUM_SIZE = 10
 BIGGER_SIZE = 12
 
-matplotlib.rcParams['figure.dpi'] = 150 #high resolution 100~300
+#matplotlib.rcParams['figure.dpi'] = 150 #high resolution 100~300
 
 plt.rc('font', size=SMALL_SIZE)          # controls default text sizes
 #plt.rc('font', family='Times New Roman')
