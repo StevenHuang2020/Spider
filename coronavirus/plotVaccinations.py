@@ -146,22 +146,30 @@ def InterpolationDf(dateIndex, df):
         #print(index, value) #2021-05-27 115.86
         #indexD=datetime.datetime.strptime(index,'%Y-%m-%d') 
         #indexStr = datetime.datetime.strftime(indexD,'%m/%d/%Y')
-        indexD, indexStr = strToDate(index)
+        indexD, indexStr = strToDate(index, inFmt='%m/%d/%y')
         
         if indexStr not in dateIndex:
             df = df.drop(labels=[index])
     #print('df=\n', df, df.shape)
     #start = df['2021-01-12'] #df.iloc[0]
     #print('start=', start)
+    #print('df.keys()=', df.keys())
     for i, date in enumerate(dateIndex):
-        indexD, indexStr = strToDate(date, inFmt='%m/%d/%Y', outFmt='%Y-%m-%d')
+        indexD, indexStr = strToDate(date, inFmt='%m/%d/%Y', outFmt='%#m/%#d/%y')
         #indexD=datetime.datetime.strptime(date,'%m/%d/%Y') 
         #indexStr = datetime.datetime.strftime(indexD,'%Y-%m-%d')
         if indexStr not in df.keys():
             #print('indexStr=', indexStr)
             minKey, maxKey = df.keys()[0], df.keys()[-1]
-            minKeyD,minKeyStr = strToDate(minKey, '%Y-%m-%d', '%Y-%m-%d')
-            maxKeyD,maxKeyStr = strToDate(maxKey, '%Y-%m-%d', '%Y-%m-%d')
+            #print('minKey, maxKey=', minKey, maxKey)
+            fmt = '%m/%d/%y'
+            if '-' in minKey: #'2021-01-12' '6/2/21' '06/02/21'
+                fmt = '%Y-%m-%d'
+            minKeyD,minKeyStr = strToDate(minKey, fmt, '%#m/%#d/%y')
+            
+            if '-' in maxKey:
+                fmt = '%Y-%m-%d'
+            maxKeyD,maxKeyStr = strToDate(maxKey, fmt, '%#m/%#d/%y') #'%Y-%m-%d'
             
             if indexD<=minKeyD:
                 df.loc[indexStr] = df[minKeyStr]
@@ -169,14 +177,19 @@ def InterpolationDf(dateIndex, df):
                 df.loc[indexStr] = df[maxKeyStr]
             else:
                 dBefore = indexD - datetime.timedelta(days=1)
-                dBeforeStr = datetime.datetime.strftime(dBefore,'%Y-%m-%d')
+                dBeforeStr = datetime.datetime.strftime(dBefore,'%#m/%#d/%y')
                 #print('indexStr,dBeforeStr=', indexStr, dBeforeStr, df.keys())
                 df.loc[indexStr] = df[dBeforeStr]
                 #print('indexStr,dBeforeStr=', indexStr, dBeforeStr, df[dBeforeStr])
                 
     #print('after df=\n', df, df.shape)
+    assert(df.shape[0] == len(dateIndex))
+    
+    #pd.to_datetime(df.index, infer_datetime_format=True)
+    df.index = pd.to_datetime(df.index)
+    #pd.to_datetime(df, format='%d/%m/%Y')
     df.sort_index(inplace=True)
-    #df.to_csv(os.path.join(r'./OurWrold', 'test2.csv'), index=True)  
+    df.to_csv(os.path.join(r'./OurWrold', 'test2.csv'), index=True)  
     #print('keys=', df.keys(),len(df.keys()))
     return df
 
@@ -249,7 +262,7 @@ def plotConuntryVaccinations():
     dfAll = pd.concat(dfAll)
     print(dfAll.head())
     print(dfAll.columns)
-
+    
     plotContinentVaccinations(dfAll)
     
     top = 10
@@ -257,7 +270,7 @@ def plotConuntryVaccinations():
     print('dfAll=\n', dfAll)
     
     dfCountries = dfAll.iloc[:top, :]
-    #dfCountries = dfAll[dfAll['location'] == 'Falkland Islands' ]
+    #dfCountries = dfAll[dfAll['location'] == 'vaccination_Saint Helena' ]
     #print('dfCountries=\n', dfCountries)
     
     fileName = gSaveBasePath + 'World_vaccinePerH_top.png'
@@ -271,7 +284,8 @@ def plotConuntryVaccinations():
     title = 'Top ' + str(top) + ' countries vaccinated fully,' + getDataStr()
     columnLabel = 'people_fully_vaccinated_per_hundred'
     plotConuntryVaccinationsByTime(vaccCountryPath, dfCountries, columnLabel, title, fileName)
- 
+    
+    top = 20
     dfAll = dfAll.sort_values(by=['people_vaccinated'], ascending=False)
     #print(dfAll.head())
     dfCountries = dfAll.dropna(subset=['continent']) #remove continent only remain countries
@@ -286,10 +300,9 @@ def main():
     file = r'./OurWrold/vaccinations.csv'
     df = readCsv(file)
     
-    #saveCountryVaccData(df)
-    #plotWorldVaccinations(df)
+    saveCountryVaccData(df)
+    plotWorldVaccinations(df)
     plotConuntryVaccinations()
-    #plotContinentVaccinations(df)
     
 if __name__=="__main__":
     main()

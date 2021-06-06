@@ -24,7 +24,8 @@ Data Reference: <br/>
 
 
 COVID-19 Datasets:<br/>
- - World data: [./coronavirus/data](https://github.com/StevenHuang2020/COVID-19-Statistics/tree/master/coronavirus/data) <br/>
+ - World Cases: [./coronavirus/data](https://github.com/StevenHuang2020/COVID-19-Statistics/tree/master/coronavirus/data) <br/>
+ - World Vaccinations: [./coronavirus/OurWrold](https://github.com/StevenHuang2020/COVID-19-Statistics/tree/master/coronavirus/OurWrold) <br/>
  - Country data: [./coronavirus/dataCountry](https://github.com/StevenHuang2020/COVID-19-Statistics/tree/master/coronavirus/dataCountry) <br/>
  - NZ data: [./coronavirus/NZ](https://github.com/StevenHuang2020/COVID-19-Statistics/tree/master/coronavirus/NZ) <br/>
 

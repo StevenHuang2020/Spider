@@ -5,8 +5,11 @@
 #Date: 2021/06/05
 #Author: Steven Huang, Auckland, NZ
 import numpy as np
+import matplotlib
 import matplotlib.pyplot as plt
 import pandas as pd
+
+matplotlib.rcParams['figure.dpi'] = 150 #high resolution 100~300
 
 def probablityVaccine(p, N): #1-(1-p)^N
     """
@@ -34,7 +37,7 @@ def plotVaccins(data):
     #plt.legend()
     plt.grid(linestyle='-.', alpha=0.5) #'-', '--', '-.', ':', '',
     #plt.legend(loc='lower left')
-    plt.savefig(r'.\images\probVaccine.png', dpi=300)
+    plt.savefig(r'.\images\probVaccine.png')
     plt.show()
     pass
     
@@ -58,7 +61,7 @@ def plotVaccinsTable(data):
        
     plt.axis('off')
     plt.tight_layout()
-    plt.savefig(r'.\images\probVaccineT.png', dpi=300)
+    plt.savefig(r'.\images\probVaccineT.png')
     plt.show()
     
 def generateData():
