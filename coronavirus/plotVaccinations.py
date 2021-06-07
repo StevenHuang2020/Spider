@@ -161,8 +161,10 @@ def InterpolationDf(dateIndex, df):
     Interpolate df to identical length for plot multi-countries' data at same 
     date range. If this function is not called, the plot will not be smooth. 
     Please note that there are various date formats, improper 
-    handling will cause this function to crash.
-    date format: #Reference: https://docs.python.org/3/library/datetime.html
+    handling will cause this function to crash. Date comparison must be under 
+    DateTime format instead of string.
+    
+    Date format: #Reference: https://docs.python.org/3/library/datetime.html
     '01/02/2021'    %m/%d/%Y
     '01/02/21'      %m/%d/%y
     '1/2/2021'      %#m/%#d/%Y
@@ -193,29 +195,24 @@ def InterpolationDf(dateIndex, df):
     #print('before df=\n', df, df.shape)
     
     #print('dateIndex=', dateIndex, len(dateIndex), type(dateIndex)) # 06/06/2021
+    indexFmt='%#m/%#d/%y'
+    if '-' in df.keys()[0]:
+        indexFmt='%Y-%m-%d'
+        
     for index in df.keys():
-        #indexD=datetime.datetime.strptime(index,'%Y-%m-%d') 
-        #indexStr = datetime.datetime.strftime(indexD,'%m/%d/%Y')
-        fmt = '%m/%d/%y'
-        if '-' in index:
-            fmt = '%Y-%m-%d'
         try:
-            indexD, indexStr = strToDate(index, inFmt=fmt)
+            indexD, indexStr = strToDate(index, inFmt=indexFmt, outFmt='%m/%d/%Y')
             if indexStr not in dateIndex:
                 df = df.drop(labels=[index])
         except:
             assert('Date format processing error!')
-            print('date format not same, index=', index)
+            print('Date format not same, index=', index)
             
     #print('df=\n', df, df.shape)
     #start = df['2021-01-12'] #df.iloc[0]
     #print('start=', start)
     #print('df.keys()=', df.keys(), 'minKey, maxKey=', df.keys()[0], df.keys()[-1])
-    
-    indexFmt='%#m/%#d/%y'
-    if '-' in df.keys()[0]:
-        indexFmt='%Y-%m-%d'
-        
+            
     for i, date in enumerate(dateIndex):
         indexD, indexStr = strToDate(date, inFmt='%m/%d/%Y', outFmt=indexFmt)
         if indexStr not in df.keys():
