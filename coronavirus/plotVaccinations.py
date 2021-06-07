@@ -361,13 +361,13 @@ def main():
     vaccineFile = os.path.join(path, 'vaccinations.csv')
     vaccCountryPath = os.path.join(path, 'vaccineCountry')
 
-    #dataAllFile = downloadOurWorldData(path)
-    #getVaccinesFile(dataAllFile, vaccineFile)
+    dataAllFile = downloadOurWorldData(path)
+    getVaccinesFile(dataAllFile, vaccineFile)
     
     df = readCsv(vaccineFile)
-    #saveCountryVaccData(df)
+    saveCountryVaccData(df)
     
-    #plotWorldVaccinations(df)
+    plotWorldVaccinations(df)
     plotConuntryVaccinations(vaccCountryPath)
     
 if __name__=="__main__":
