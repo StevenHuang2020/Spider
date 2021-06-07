@@ -9,9 +9,13 @@ from numpy.core.numeric import NaN
 import pandas as pd
 import matplotlib
 import matplotlib.pyplot as plt
-from plotCoronavirous import readCsv, gSaveBasePath,binaryDf
+from plotCoronavirous import readCsv, gSaveBasePath,binaryDf,getVaccinesFile
 from predictStatistics import plotDataAx
 from commonPath import createPath,getFileName,pathsFiles
+from common.getHtml import downWebFile
+
+#data source: https://ourworldindata.org/covid-vaccinations?country=OWID_WRL
+gCovidCsv = 'https://raw.githubusercontent.com/owid/covid-19-data/master/public/data/owid-covid-data.csv' 
 
 SMALL_SIZE = 8
 MEDIUM_SIZE = 10
@@ -28,7 +32,7 @@ plt.rc('ytick', labelsize=SMALL_SIZE)    # fontsize of the tick labels
 plt.rc('legend', fontsize=SMALL_SIZE)    # legend fontsize
 plt.rc('figure', titlesize=SMALL_SIZE)   # fontsize of the figure title
 
-def getDataStr():
+def getDateStr():
     now = datetime.datetime.now()
     return str(' Date:') + str(now.strftime("%Y-%m-%d %H:%M:%S"))
 
@@ -59,31 +63,57 @@ def plotWorldVaccinations(df):
     
     kinds = ['line','bar','barh','hist','box','kde','density','area']  
     
-    title = 'World people vaccinated,' + getDataStr()
+    title = 'World people vaccinated,' + getDateStr()
     y=['people_vaccinated', 'people_fully_vaccinated']
     fileName = gSaveBasePath + 'World_vaccinated.png'
     plotData(df, title=title, kind='line', y=y, fName=fileName)
     
-    title = 'World vaccinated per hundred,' + getDataStr()
+    title = 'World vaccinated per hundred,' + getDateStr()
     y=['people_vaccinated_per_hundred', 'people_fully_vaccinated_per_hundred']
     fileName = gSaveBasePath + 'World_vaccinatedPerHundred.png'
     plotData(df, title=title, kind='line', y=y, fName=fileName)
     
-    title = 'World new vaccinated,' + getDataStr()
+    title = 'World new vaccinated,' + getDateStr()
     y=['new_vaccinations']
     fileName = gSaveBasePath + 'World_vaccinatedNew.png'
     plotData(df, title=title, kind='bar', y=y, fName=fileName)   
    
-    title = 'World total vaccinated,' + getDataStr()
+    title = 'World total vaccinated,' + getDateStr()
     y=['total_vaccinations']
     fileName = gSaveBasePath + 'World_vaccinatedTotal.png'
     plotData(df, title=title, kind='bar', y=y, fName=fileName)   
+    
+def plotVaccinationRankings(dfAll): 
+    #----vaccine contienet ranking------
+    plotContinentVaccinations(dfAll)
+    
+    top = 25
+    dfAll = dfAll[dfAll['continent'].notnull()] #remain countries not continent
+    dfAll.set_index(["location"], inplace=True)  
+    print('dfAll=\n', dfAll)
+    
+    #----vaccinated people ranking------
+    dfAll = dfAll.sort_values(by=['people_vaccinated'], ascending=False)
+    dfData = dfAll.iloc[:top, :]
+    title = 'Top ' + str(top) + ' countries people vaccinated,' + getDateStr()
+    y=['people_vaccinated']
+    fileName = gSaveBasePath + 'World_vaccineRankingPeople.png'
+    plotData(dfData, title=title, kind='bar', y=y, fName=fileName)
+    
+    #----vaccinated peope per hundred ranking------
+    dfAll = dfAll.sort_values(by=['people_vaccinated_per_hundred'], ascending=False)
+    dfData = dfAll.iloc[:top, :]
+    title = 'Top ' + str(top) + ' countries people vaccinated per hundred,' + getDateStr()
+    y=['people_vaccinated_per_hundred']
+    fileName = gSaveBasePath + 'World_vaccineRankingPeoplePerH.png'
+    plotData(dfData, title=title, kind='bar', y=y, fName=fileName)
+    
     
 def plotContinentVaccinations(dfAll): 
     dfContinent = dfAll[dfAll['continent'].isnull()]  
     print('dfContinent=\n', dfContinent)
     dfContinent.set_index(["location"], inplace=True)  
-    title = 'Continent vaccinated,' + getDataStr()
+    title = 'Continent vaccinated,' + getDateStr()
     y=['people_vaccinated_per_hundred', 'people_fully_vaccinated_per_hundred']
     fileName = gSaveBasePath + 'World_vaccineContinent.png'
     plotData(dfContinent, title=title, kind='bar', y=y, fName=fileName, bottom=0.16)
@@ -126,6 +156,27 @@ def strToDate(str , inFmt='%Y-%m-%d', outFmt='%m/%d/%Y'):
     return strD,strOut
 
 def InterpolationDf(dateIndex, df):
+    """
+    @Desciption
+    Interpolate df to identical length for plot multi-countries' data at same 
+    date range. If this function is not called, the plot will not be smooth. 
+    Please note that there are various date formats, improper 
+    handling will cause this function to crash.
+    date format: #Reference: https://docs.python.org/3/library/datetime.html
+    '01/02/2021'    %m/%d/%Y
+    '01/02/21'      %m/%d/%y
+    '1/2/2021'      %#m/%#d/%Y
+    '2021-01-02'    %Y-%m-%d
+    
+    @parameters
+    dateIndex: form '01/12/2021' to today, please see function getDateIndex()
+    df: Pandas dateframe/series to be interpolated
+    1) if df's line is NaN, set zeor if first line or the previous day's value
+    2) if df's date index out of dateIndex, remove the line
+    3) if df does not contain a row with index belongs to dateIndex,interpolate by the value
+        of the most recent day before in df.
+    """
+        
     #print('df=\n', df, df.shape)
     if pd.isna(df.iat[0]):
         #df.iloc[0] = 0
@@ -142,54 +193,60 @@ def InterpolationDf(dateIndex, df):
     #print('before df=\n', df, df.shape)
     
     #print('dateIndex=', dateIndex, len(dateIndex), type(dateIndex)) # 06/06/2021
-    for index, value in df.items():
-        #print(index, value) #2021-05-27 115.86
+    for index in df.keys():
         #indexD=datetime.datetime.strptime(index,'%Y-%m-%d') 
         #indexStr = datetime.datetime.strftime(indexD,'%m/%d/%Y')
-        indexD, indexStr = strToDate(index, inFmt='%m/%d/%y')
-        
-        if indexStr not in dateIndex:
-            df = df.drop(labels=[index])
+        fmt = '%m/%d/%y'
+        if '-' in index:
+            fmt = '%Y-%m-%d'
+        try:
+            indexD, indexStr = strToDate(index, inFmt=fmt)
+            if indexStr not in dateIndex:
+                df = df.drop(labels=[index])
+        except:
+            assert('Date format processing error!')
+            print('date format not same, index=', index)
+            
     #print('df=\n', df, df.shape)
     #start = df['2021-01-12'] #df.iloc[0]
     #print('start=', start)
-    #print('df.keys()=', df.keys())
+    #print('df.keys()=', df.keys(), 'minKey, maxKey=', df.keys()[0], df.keys()[-1])
+    
+    indexFmt='%#m/%#d/%y'
+    if '-' in df.keys()[0]:
+        indexFmt='%Y-%m-%d'
+        
     for i, date in enumerate(dateIndex):
-        indexD, indexStr = strToDate(date, inFmt='%m/%d/%Y', outFmt='%#m/%#d/%y')
-        #indexD=datetime.datetime.strptime(date,'%m/%d/%Y') 
-        #indexStr = datetime.datetime.strftime(indexD,'%Y-%m-%d')
+        indexD, indexStr = strToDate(date, inFmt='%m/%d/%Y', outFmt=indexFmt)
         if indexStr not in df.keys():
-            #print('indexStr=', indexStr)
             minKey, maxKey = df.keys()[0], df.keys()[-1]
-            #print('minKey, maxKey=', minKey, maxKey)
-            fmt = '%m/%d/%y'
-            if '-' in minKey: #'2021-01-12' '6/2/21' '06/02/21'
-                fmt = '%Y-%m-%d'
-            minKeyD,minKeyStr = strToDate(minKey, fmt, '%#m/%#d/%y')
+            #print(i, 'indexStr=', indexStr, 'minKey, maxKey=', minKey, maxKey)
+
+            minKeyD,minKeyStr = strToDate(minKey, indexFmt, indexFmt)
+            maxKeyD,maxKeyStr = strToDate(maxKey, indexFmt, indexFmt) 
             
-            if '-' in maxKey:
-                fmt = '%Y-%m-%d'
-            maxKeyD,maxKeyStr = strToDate(maxKey, fmt, '%#m/%#d/%y') #'%Y-%m-%d'
-            
-            if indexD<=minKeyD:
-                df.loc[indexStr] = df[minKeyStr]
-            elif indexD<=maxKeyD:
-                df.loc[indexStr] = df[maxKeyStr]
+            if indexD<=minKeyD: #comparison under datetime format not string 
+                df.loc[indexStr] = df[minKey]
+            elif indexD>=maxKeyD:
+                df.loc[indexStr] = df[maxKey]
             else:
                 dBefore = indexD - datetime.timedelta(days=1)
-                dBeforeStr = datetime.datetime.strftime(dBefore,'%#m/%#d/%y')
+                dBeforeStr = datetime.datetime.strftime(dBefore, indexFmt)
                 #print('indexStr,dBeforeStr=', indexStr, dBeforeStr, df.keys())
                 df.loc[indexStr] = df[dBeforeStr]
                 #print('indexStr,dBeforeStr=', indexStr, dBeforeStr, df[dBeforeStr])
                 
+            df.sort_index(inplace=True)    
+                
     #print('after df=\n', df, df.shape)
+    #print('df,dateIndex=', df.shape, len(dateIndex))
+    #print('df.keys()=', df.keys())
     assert(df.shape[0] == len(dateIndex))
     
     #pd.to_datetime(df.index, infer_datetime_format=True)
     df.index = pd.to_datetime(df.index)
-    #pd.to_datetime(df, format='%d/%m/%Y')
     df.sort_index(inplace=True)
-    df.to_csv(os.path.join(r'./OurWrold', 'test2.csv'), index=True)  
+    #df.to_csv(os.path.join(r'./OurWrold', 'test2.csv'), index=True)  
     #print('keys=', df.keys(),len(df.keys()))
     return df
 
@@ -222,7 +279,7 @@ def plotConuntryVaccinationsByTime(path, dfCountries, coloumnLabel, title, fileN
         y=y[[i%inter==0 for i in range(len(y.index))]]
         #print('type(y), type(xIndex)=', type(y), y.shape, type(xIndex),len(xIndex))
         
-        plotDataAx(ax, xIndex, y, country, fontsize=SMALL_SIZE)
+        plotDataAx(ax, y.index, y, country, fontsize=SMALL_SIZE)
         #break
     
     plt.ylim(0)
@@ -230,7 +287,7 @@ def plotConuntryVaccinationsByTime(path, dfCountries, coloumnLabel, title, fileN
     plt.savefig(fileName)
     plt.show()
         
-def plotConuntryVaccinations(): 
+def plotConuntryVaccinations(vaccPath=r'./OurWrold/vaccineCountry'): 
     def getCountryNewestLine(file):
         country=getFileName(file)[len('vaccination_'):-4]
         #print('country=', country)
@@ -248,11 +305,9 @@ def plotConuntryVaccinations():
             return newestLine
         return None
     
-    
-    vaccCountryPath=r'./OurWrold/vaccineCountry'
     dfAll = []
-    for fileCountry in pathsFiles(vaccCountryPath, 'csv'):
-        #fileCountry = os.path.join(vaccCountryPath, 'vaccination_Burkina Faso.csv')
+    for fileCountry in pathsFiles(vaccPath, 'csv'):
+        #fileCountry = os.path.join(vaccPath, 'vaccination_Burkina Faso.csv')
         line = getCountryNewestLine(fileCountry)
         #print('line=', line, type(line))
         if line is not None:
@@ -263,46 +318,57 @@ def plotConuntryVaccinations():
     print(dfAll.head())
     print(dfAll.columns)
     
-    plotContinentVaccinations(dfAll)
+    plotVaccinationRankings(dfAll)
     
-    top = 10
+    top = 20
     dfAll = dfAll.sort_values(by=['people_vaccinated_per_hundred'], ascending=False)
     print('dfAll=\n', dfAll)
     
     dfCountries = dfAll.iloc[:top, :]
-    #dfCountries = dfAll[dfAll['location'] == 'vaccination_Saint Helena' ]
+    #dfCountries = dfAll[dfAll['location'] == 'Saint Helena' ]
     #print('dfCountries=\n', dfCountries)
     
     fileName = gSaveBasePath + 'World_vaccinePerH_top.png'
-    title = 'Top ' + str(top) + ' countries vaccinated per hundred,' + getDataStr()
+    title = 'Top ' + str(top) + ' countries vaccinated per hundred,' + getDateStr()
     columnLabel = 'people_vaccinated_per_hundred'
-    plotConuntryVaccinationsByTime(vaccCountryPath, dfCountries, columnLabel, title, fileName)
-   
+    plotConuntryVaccinationsByTime(vaccPath, dfCountries, columnLabel, title, fileName)
+    
     dfAll = dfAll.sort_values(by=['people_fully_vaccinated_per_hundred'], ascending=False)
     dfCountries = dfAll.iloc[:top, :]
     fileName = gSaveBasePath + 'World_vaccineFully_top.png'
-    title = 'Top ' + str(top) + ' countries vaccinated fully,' + getDataStr()
+    title = 'Top ' + str(top) + ' countries vaccinated fully,' + getDateStr()
     columnLabel = 'people_fully_vaccinated_per_hundred'
-    plotConuntryVaccinationsByTime(vaccCountryPath, dfCountries, columnLabel, title, fileName)
-    
+    plotConuntryVaccinationsByTime(vaccPath, dfCountries, columnLabel, title, fileName)
+      
     top = 20
     dfAll = dfAll.sort_values(by=['people_vaccinated'], ascending=False)
     #print(dfAll.head())
     dfCountries = dfAll.dropna(subset=['continent']) #remove continent only remain countries
     dfCountries = dfCountries.iloc[:top, :]
     fileName = gSaveBasePath + 'World_peopleVaccined_top.png'
-    title = 'Top ' + str(top) + ' countries people vaccinated,' + getDataStr()
+    title = 'Top ' + str(top) + ' countries people vaccinated,' + getDateStr()
     columnLabel = 'people_vaccinated'
-    plotConuntryVaccinationsByTime(vaccCountryPath, dfCountries, columnLabel, title, fileName)
-    
+    plotConuntryVaccinationsByTime(vaccPath, dfCountries, columnLabel, title, fileName)
+
+def downloadOurWorldData(csvpath=r'./OurWrold/'):
+    createPath(csvpath)
+    file = os.path.join(csvpath, 'owid-covid-data.csv')
+    downWebFile(gCovidCsv, file)
+    return file
     
 def main():
-    file = r'./OurWrold/vaccinations.csv'
-    df = readCsv(file)
+    path = r'./OurWrold/'
+    vaccineFile = os.path.join(path, 'vaccinations.csv')
+    vaccCountryPath = os.path.join(path, 'vaccineCountry')
+
+    #dataAllFile = downloadOurWorldData(path)
+    #getVaccinesFile(dataAllFile, vaccineFile)
     
-    saveCountryVaccData(df)
-    plotWorldVaccinations(df)
-    plotConuntryVaccinations()
+    df = readCsv(vaccineFile)
+    #saveCountryVaccData(df)
+    
+    #plotWorldVaccinations(df)
+    plotConuntryVaccinations(vaccCountryPath)
     
 if __name__=="__main__":
     main()

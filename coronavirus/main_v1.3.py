@@ -20,11 +20,9 @@ from common.getHtml import downWebFile
 from plotCoronavirous import plotData
 from commonPath import createPath
 from plotCoronavirous import plotWorldStatisticByTime, getVaccinesFile
+from plotVaccinations import gCovidCsv,downloadOurWorldData
 
 mainUrl = 'https://google.com/covid19-map/'
-
-#data source: https://ourworldindata.org/covid-vaccinations?country=OWID_WRL
-gCovidCsv = 'https://raw.githubusercontent.com/owid/covid-19-data/master/public/data/owid-covid-data.csv' 
 
 def parseXpathTr(tr,columns):
     location,confirmed,NewCases,Case_Per_1M_people,deaths = '','','','',''
@@ -68,9 +66,6 @@ def parseXpathTr(tr,columns):
 def getHeader(thead):
     ths = thead.find_elements_by_xpath('//tr[@class="sgXwHf"]//div[@class="XmCM0b"]')
     print('len=',len(ths))
-    # columns = []
-    # for th in ths:
-    #     columns.append(th.text)
     columns = [th.text for th in ths]
     return columns
 
@@ -124,15 +119,7 @@ def Load(url):
   
     print('df.shape=', df.shape)
     return preprocessData(df)
-        
-def downloadOurWorldData():
-    csvpath = r'./OurWrold/'
-    createPath(csvpath)
-    file = os.path.join(csvpath, 'owid-covid-data.csv')
-    #downWebFile(gCovidCsv, file)
-    fileVacc = os.path.join(csvpath, 'vaccinations.csv')
-    getVaccinesFile(file, fileVacc)
-    
+            
 def argCmdParse():
     parser = argparse.ArgumentParser()
     parser.add_argument('-n', '--noplot', action="store_true", help = 'only download data, not plot it')
