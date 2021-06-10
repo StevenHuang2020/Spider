@@ -125,7 +125,10 @@ def plotPredictFuture(model,trainY,index,data):
 
     startIndex = index[-1]
     #sD=datetime.datetime.strptime(startIndex,'%b %d, %Y')
-    sD=datetime.datetime.strptime(startIndex,'%m/%d/%y') #'%Y-%m-%d'
+    fmt = '%m/%d/%y'
+    if '-' in startIndex:
+        fmt = '%Y-%m-%d'
+    sD=datetime.datetime.strptime(startIndex, fmt) #'%Y-%m-%d'
     
     newIndex=[]
     startIndex = datetime.datetime.strftime(sD,'%m/%d/%Y')

@@ -17,7 +17,7 @@ from lxml import etree
 
 from plotCoronavirous import gSaveBasePath,readCsv
 
-plt.rcParams['figure.dpi'] = 120 #high resolution
+#plt.rcParams['figure.dpi'] = 120 #high resolution
 
 #reference: https://www.health.govt.nz/our-work/diseases-and-conditions/covid-getDataFileFromWeb19-novel-coronavirus/covid-19-current-situation/covid-19-current-cases
 #https://www.health.govt.nz/system/files/documents/pages/covid-cases-24july20.xlsx
