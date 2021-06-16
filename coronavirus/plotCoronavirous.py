@@ -901,7 +901,8 @@ def plotConuntryCasesByTime(path, dfCountries, coloumnLabel, title, fileName):
     #dateIndex = getDateIndex()
 
     #print('dfCountries=\n', dfCountries)
-    countries = list(dfCountries.location.unique())
+    #countries = list(dfCountries.location.unique())
+    countries = list(dfCountries.index.unique())
     #print('countries=', countries)
     dfAll = []
     for country in countries:
@@ -1110,7 +1111,6 @@ def saveCountriesInfoFromCsv(csvpath):
     df = readCsv(casesFile)
     
     createPath(gSaveCountryData)
-    
     countries = list(df.location.unique())
     #print('countries=', countries, len(countries))
     bar = SimpleProgressBar(total=len(countries),title='Save Country Files',width=30)
