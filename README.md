@@ -69,7 +69,6 @@ Updated to adapt the new google page.<br/>
 ### Cases<br/>
 |||
 |---|---|
-|<img src="images/nc1.png" width="320" height="240" />|<img src="images/nd2.png" width="320" height="240" />|
 |<img src="images/1.png" width="320" height="240" />|<img src="images/2.png" width="320" height="240" />|
 |<img src="images/3.png" width="320" height="240" />|<img src="images/4.png" width="320" height="240" />|
 |<img src="images/5.png" width="320" height="240" />|<img src="images/6.png" width="320" height="240" />|
