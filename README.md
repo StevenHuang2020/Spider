@@ -73,8 +73,7 @@ Updated to adapt the new google page.<br/>
 |<img src="images/1.png" width="320" height="240" />|<img src="images/2.png" width="320" height="240" />|
 |<img src="images/3.png" width="320" height="240" />|<img src="images/4.png" width="320" height="240" />|
 |<img src="images/5.png" width="320" height="240" />|<img src="images/6.png" width="320" height="240" />|
-|<img src="images/7.png" width="320" height="240" />|<img src="images/8.png" width="320" height="240" />|
-|<img src="images/9.png" width="320" height="240" />||
+|<img src="images/7.png" width="320" height="240" />||
  
 <br/>
 
@@ -82,16 +81,13 @@ Updated to adapt the new google page.<br/>
 
 |||
 |---|---|
-|<img src="images/countries_Confirmed.png" width="320" height="240" />|<img src="images/countries_Deaths.png" width="320" height="240" />|
-|<img src="images/countries_NewConfirmed.png" width="320" height="240" />|<img src="images/countries_NewDeaths.png" width="320" height="240" />|
-|<img src="images/countries0_Confirmed.png" width="320" height="240" />|<img src="images/countries0_Deaths.png" width="320" height="240" />|
-|<img src="images/countries0_NewConfirmed.png" width="320" height="240" />|<img src="images/countries0_NewDeaths.png" width="320" height="240" />|
+|<img src="images/countries_Confirmed.png" width="320" height="240" />|<img src="images/countries_NewConfirmed.png" width="320" height="240" />|
+|<img src="images/countries_Deaths.png" width="320" height="240" />|<img src="images/countries_NewDeaths.png" width="320" height="240" />|
 |<img src="images/World_Cases.png" width="320" height="240" />|<img src="images/World_NewCases.png" width="320" height="240" />|
 |<img src="images/World_RecentNewCases.png" width="320" height="240" />|<img src="images/World_Deaths.png" width="320" height="240" />|
 |<img src="images/World_NewDeaths.png" width="320" height="240" />|<img src="images/World_RecentNewDeaths.png" width="320" height="240" />|
-|<img src="images/WorldChange_confirmed.png" width="320" height="240" />|<img src="images/WorldChange_deaths.png" width="320" height="240" />|
-|<img src="images/WorldChange_newCases.png" width="320" height="240" />|<img src="images/WorldChange_mortality.png" width="320" height="240" />|
-|<img src="images/WorldChange_case_per1M_people.png" width="320" height="240" />|<img src="images/WorldChange_all.png" width="320" height="240" />|
+|<img src="images/World_Mortality.png" width="320" height="240" />||
+
 <br/>
 
 ### World cases Prediction

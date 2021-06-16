@@ -9,7 +9,7 @@ def pathsFileFolders(dir, subFolder=False): #Traverse the folders under the path
             yield os.path.join(dirpath, dirName) #dirpath+'\\'+filename
         if not subFolder:
             break
-            
+                           
 def pathsFiles(dir, filter='', subFolder=False): #Traverse the files under the path
     #filter: cpp h txt jpg
     def getExtFile(file):

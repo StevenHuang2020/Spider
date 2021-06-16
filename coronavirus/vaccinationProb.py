@@ -9,7 +9,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 import pandas as pd
 
-matplotlib.rcParams['figure.dpi'] = 120 #high resolution 100~300
+#matplotlib.rcParams['figure.dpi'] = 120 #high resolution 100~300
 
 def probablityVaccine(p, N): #1-(1-p)^N
     """

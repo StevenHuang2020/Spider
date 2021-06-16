@@ -8,7 +8,7 @@ import math
 import os 
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' #not print tf debug info
-plt.rcParams['savefig.dpi'] = 300 #matplot figure quality when save
+#plt.rcParams['savefig.dpi'] = 300 #matplot figure quality when save
 
 from tensorflow.keras import optimizers
 from tensorflow.keras.models import Sequential
@@ -17,13 +17,35 @@ from sklearn.preprocessing import MinMaxScaler,StandardScaler
 from sklearn.metrics import mean_squared_error
 from sklearn.model_selection import train_test_split, cross_val_score
 
-from plotCoronavirous import binaryDf,pathsFiles
+from commonPath import pathsFiles
 from jsonUpdate import getDataTime
 
 gScaler = MinMaxScaler() #StandardScaler() #
 
 gSaveBasePath = r'.\images\\'
 gSavePredict = r'.\dataPredict\\'
+
+def binaryDf(df, labelAdd=True):
+    newdf = pd.DataFrame(columns=df.columns)
+    #print('pd.shape=',df.shape)
+    newIndex = []
+    for i in range(df.shape[0]//2):
+        #dd = df.loc[df.index[i*2], :]
+        dd = df.iloc[i*2, :]
+        #print('dd=',df.index[i*2], dd.values)
+        if labelAdd:
+            #print('index=',df.index[i*2])
+            #print('new=',df.index[i*2] +',' + df.index[i*2+1])
+            newIndex.append(str(df.index[i*2]) +',' + str(df.index[i*2+1])) #combine
+        else:
+            newIndex.append(df.index[i*2])#drop
+            
+        newdf = newdf.append(dd,ignore_index=True)
+        
+    #print('newIndex=',len(newIndex))
+    #print('newdf.shape=',newdf.shape)
+    newdf.index = newIndex
+    return newdf
 
 def plotDataSet(data):
     plt.plot(data)
@@ -64,8 +86,8 @@ def getDataSet(file=r'.\OurWrold\owid-covid-data.csv'):
     print(dataset.dtypes)
     return dataset
 
-def plotDataAx(ax,x,y,label='', fontsize = 5):
-    ax.plot(x,y,label=label)
+def plotDataAx(ax,x,y,label='', fontsize = 5, color=None):
+    ax.plot(x,y,label=label,color=color)
     #ax.set_aspect(1)
     ax.legend()
     plt.setp(ax.get_xticklabels(), rotation=30, ha="right",fontsize=fontsize,fontweight=10)
@@ -313,9 +335,9 @@ def predict():
     datasetToday = getDataSet()
     train(datasetToday)
 
-    #file = getNewestFile(r'.\dataPredict',index=-4) #compare last time predict 
-    #print('Last predicted file:',file)
-    #evaulatePredition(datasetToday, file)
+    file = getNewestFile(r'.\dataPredict',index=-4) #compare last time predict 
+    print('Last predicted file:',file)
+    evaulatePredition(datasetToday, file)
     
 def main():
     predict()
