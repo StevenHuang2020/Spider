@@ -17,7 +17,7 @@ from main_v1 import preprocessData
 
 #from predictStatistics import predict
 from common.getHtml import downWebFile
-from plotCoronavirous import plotDataGoogle
+from plotCoronavirous import plotDataGoogle,plotCountriesFromOurWorld
 from commonPath import createPath
 from plotCoronavirous import plotWorldStatisticByTime, getVaccinesFile
 from plotVaccinations import gCovidCsv,downloadOurWorldData
@@ -134,8 +134,8 @@ if __name__ == '__main__':
     
     downloadOurWorldData()
     
-    df = Load(mainUrl) #from google data
-    if plot:
-        plotDataGoogle(df,60)
+    #df = Load(mainUrl) #from google data
+    # if plot:
+    #     plotDataGoogle(df,60)
 
-    
+    plotCountriesFromOurWorld()

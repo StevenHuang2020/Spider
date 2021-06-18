@@ -159,13 +159,13 @@ def plotDataGoogle(df, number=25):
     plt.show()
     
     #plotTable(worldDf)
-    plotChangeBydata(fontsize = fontsize)
+    #plotChangeBydata(fontsize = fontsize)
     #plotWorldStatConfirmCaseByTime()
     #plotWorldStatDeathsByTime()
     #plotNewCasesByCountry()
     #plotCountriesInfo()
-    plotCountriesFromOurWorld()
-    plotWorldStatisticByTime()
+    #plotCountriesFromOurWorld()
+    #plotWorldStatisticByTime()
     #getNZCovid19()
     
 def plotTable(df):
@@ -783,6 +783,7 @@ def plotCountriesFromOurWorld(csvpath=r'./OurWrold/'): #From ourworld data
     countriesPath = r'./dataCountry/'
     dfToday = getAllOurWorldNew(countriesPath)
     plotContinentCases(dfToday)
+
     plotCountriesCases(dfToday)
     
     #plot country by time      
@@ -812,7 +813,7 @@ def plotCountriesFromOurWorld(csvpath=r'./OurWrold/'): #From ourworld data
     
     columnLabel = 'new_cases'
     dfData = getTopDataCountries(df, top, columnLabel)
-    title = 'Top ' + str(top) + ' New Deaths' + getDateStr()    
+    title = 'Top ' + str(top) + ' New Cases' + getDateStr()    
     fileName = gSaveBasePath + 'countries_NewConfirmed.png'
     plotAll.append((columnLabel, dfData, title, fileName))
     
@@ -820,7 +821,6 @@ def plotCountriesFromOurWorld(csvpath=r'./OurWrold/'): #From ourworld data
     for i, value in enumerate(plotAll):
         columnLabel, dfData, title, fileName = value
         plotConuntryCasesByTime(countriesPath, dfData, columnLabel, title, fileName)
-    pass
 
 def plotCountryCasesStyle1(dfAll, coloumnLabel, title, fileName, days = 60):
     plt.clf()
@@ -1033,24 +1033,65 @@ def plotWorldCases(df):
     plt.show()
     
 def plotContinentCases(df): 
+    def plotContienet(dfContinent,y,title,fileName,color):
+        if 0:
+            plotData(dfContinent, title=title, kind='bar', y=y, fName=fileName, color=color, bottom=0.17, top=0.9)
+        else:
+            #dfContinentTable = dfContinent.iloc[:, [2,3,5,6]]
+            dfContinentTable = dfContinent.iloc[:, [dfContinent.columns.get_loc(i) for i in y]]
+            dfContinentTable = dfContinentTable.astype('int32')
+            
+            #start to plot bar and table
+            #y1 = dfContinent['total_cases']#dfContinent.loc[:,['total_cases', 'total_deaths']]
+            #y2 = dfContinent['total_deaths']    
+            #plt.bar(y1.index, y1, width=0.4) #bottom=0, color=color
+            #plt.bar(y2.index, y2, width=0.4) #bottom=0, color=color
+            ax = dfContinent.plot(kind='barh', title=title, y=y, color=color, \
+                figsize=(8,5)) #grid=True, logy=True
+            #ax.get_xaxis().set_visible(False)
+            ax.get_xaxis().tick_top()
+            plt.table(cellText=dfContinentTable.values,
+                                rowLabels=dfContinentTable.index,
+                                colLabels=dfContinentTable.columns,
+                                loc='bottom')
+            
+            plt.setp(ax.get_xticklabels(), rotation=30, ha="right")
+            #plt.setp(ax.get_yticklabels()) #fontsize=fontsize
+            #plt.tight_layout()
+            plt.subplots_adjust(left=0.15, bottom=0.25, right=None, top=0.82, wspace=None, hspace=None)
+            plt.savefig(fileName)
+            plt.show()
+            #print('dfContinentTable=\n', dfContinentTable)
+        
     dfContinent = df[df['continent'].isnull()]  
     dfContinent.set_index(["location"], inplace=True)  
     #print('dfContinent=\n', dfContinent)
     
     worldTotalCases = int(dfContinent.loc['World']['total_cases'])
     worldTotalDeaths = int(dfContinent.loc['World']['total_deaths'])
+    worldNewCases = int(dfContinent.loc['World']['new_cases'])
+    worldNewDeaths = int(dfContinent.loc['World']['new_deaths'])
     
     #print('world=', worldTotalCases, worldTotalDeaths) #
-    dfContinent.drop(index=['International', 'World'], inplace=True)
-        
-    print('dfContinent=\n', dfContinent)
+    dfContinent = dfContinent.drop(index=['International', 'World'])
+
+    #print('dfContinent=\n', dfContinent)
+    #print('dfContinent.columns=\n', dfContinent.columns)
     
     wroldstr = 'World total cases:{}, total deaths:{}'.format(worldTotalCases, worldTotalDeaths)
     title = wroldstr + '\n' + getDateStr()
     y=['total_cases', 'total_deaths']
     fileName = gSaveBasePath + 'World_casesContinent.png'
     color=['#1f77b4', 'red']
-    plotData(dfContinent, title=title, kind='bar', y=y, fName=fileName, color=color, bottom=0.17, top=0.9)
+    dfContinent = dfContinent.sort_values(by=[y[0]], ascending=False)
+    plotContienet(dfContinent,y,title,fileName,color)
+    
+    wroldstr = 'World new cases:{}, new deaths:{}'.format(worldNewCases, worldNewDeaths)
+    title = wroldstr + '\n' + getDateStr()
+    y=['new_cases', 'new_deaths']
+    fileName = gSaveBasePath + 'World_newCasesContinent.png'
+    dfContinent = dfContinent.sort_values(by=[y[0]], ascending=False)
+    plotContienet(dfContinent,y,title,fileName,color)
     
 def getCountryNewCasesAndDeathsDf(pdDate):
     pdDate['NewConfirmed'] = 0

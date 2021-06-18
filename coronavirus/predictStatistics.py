@@ -301,6 +301,7 @@ def evaulatePredition(df,file):
     predict['Precision'] = accs
     predict = predict.iloc[:,1:] #remove index number column
     #print(predict)
+    predict.Cases = predict.Cases.astype('int64')
     
     #plt.figure(figsize=(8,6))
     title = 'Prediction Precision\n' + 'PredictTime: ' + predictTime + ' CheckTime: '+ getDataTime()
