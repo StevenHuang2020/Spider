@@ -782,9 +782,11 @@ def plotCountriesFromOurWorld(csvpath=r'./OurWrold/'): #From ourworld data
     
     countriesPath = r'./dataCountry/'
     dfToday = getAllOurWorldNew(countriesPath)
+    
     plotContinentCases(dfToday)
-
     plotCountriesCases(dfToday)
+    
+    #dfToday.set_index(["location"], inplace=True)  
     
     #plot country by time      
     df = dfToday[dfToday['continent'].notnull()] #remain countries not continent
@@ -817,11 +819,26 @@ def plotCountriesFromOurWorld(csvpath=r'./OurWrold/'): #From ourworld data
     fileName = gSaveBasePath + 'countries_NewConfirmed.png'
     plotAll.append((columnLabel, dfData, title, fileName))
     
-    #print('dfData=', dfData)
+    dfContinent = dfToday[dfToday['continent'].isnull()] #remain  continent
+    dfContinent = dfContinent.drop(index=['World'])
+    print('dfContinent=', dfContinent)
+    
+    columnLabel = 'new_deaths'
+    dfData = getTopDataCountries(dfContinent, -1, columnLabel)
+    title = 'Continent New Deaths' + getDateStr()    
+    fileName = gSaveBasePath + 'continent_NewDeaths.png'
+    plotAll.append((columnLabel, dfData, title, fileName))
+    
+    columnLabel = 'new_cases'
+    dfData = getTopDataCountries(dfContinent, -1, columnLabel)
+    title = 'Continent New Cases' + getDateStr()    
+    fileName = gSaveBasePath + 'continent_NewConfirmed.png'
+    plotAll.append((columnLabel, dfData, title, fileName))
+
     for i, value in enumerate(plotAll):
         columnLabel, dfData, title, fileName = value
         plotConuntryCasesByTime(countriesPath, dfData, columnLabel, title, fileName)
-
+    
 def plotCountryCasesStyle1(dfAll, coloumnLabel, title, fileName, days = 60):
     plt.clf()
     ax = plt.subplot(1,1,1)
@@ -903,7 +920,7 @@ def plotConuntryCasesByTime(path, dfCountries, coloumnLabel, title, fileName):
     #print('dfCountries=\n', dfCountries)
     #countries = list(dfCountries.location.unique())
     countries = list(dfCountries.index.unique())
-    #print('countries=', countries)
+    print('countries=', countries)
     dfAll = []
     for country in countries:
         name = country + '.csv'

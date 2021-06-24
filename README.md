@@ -86,6 +86,7 @@ Updated to adapt the new google page.<br/>
 |<img src="images/World_Cases.png" width="320" height="240" />|<img src="images/World_NewCases.png" width="320" height="240" />|
 |<img src="images/World_RecentNewCases.png" width="320" height="240" />|<img src="images/World_Deaths.png" width="320" height="240" />|
 |<img src="images/World_NewDeaths.png" width="320" height="240" />|<img src="images/World_RecentNewDeaths.png" width="320" height="240" />|
+|<img src="images/continent_NewConfirmed.png" width="320" height="240" />|<img src="images/continent_NewDeaths.png" width="320" height="240" />|
 |<img src="images/World_Mortality.png" width="320" height="240" />||
 
 <br/>

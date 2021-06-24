@@ -15,10 +15,10 @@ def getDataTime():
     return t
 
 def updateJson(file='update.json'):
-    updateJson = {"schemaVersion": 1, "label": "Last update", "message": "2020-01-01 01:01"}
-    updateJson["message"] = getDataTime()
-    print(json.dumps(updateJson))
-    WriteFile(file,json.dumps(updateJson))
+    info = {"schemaVersion": 1, "label": "Last update", "message": "2020-01-01 01:01"}
+    info["message"] = getDataTime()
+    print(json.dumps(info))
+    WriteFile(file,json.dumps(info))
     
 def main():
     updateJson()

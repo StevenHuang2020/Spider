@@ -69,7 +69,6 @@ def preprocessData(df):
 
     print('\n\nAfter preprocess:\n',df.head())
     writeToCsv(df)
-    updateJson()
     return df
 
 def parseXpathTr(tr, columns):

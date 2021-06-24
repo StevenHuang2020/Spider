@@ -14,6 +14,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
 import argparse 
 from main_v1 import preprocessData
+from jsonUpdate import updateJson
 
 #from predictStatistics import predict
 from common.getHtml import downWebFile
@@ -139,3 +140,4 @@ if __name__ == '__main__':
     #     plotDataGoogle(df,60)
 
     plotCountriesFromOurWorld()
+    updateJson()
