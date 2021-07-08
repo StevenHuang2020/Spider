@@ -333,6 +333,9 @@ def plotConuntryVaccinations(vaccPath=r'./OurWrold/vaccineCountry'):
     observeCountries=['United Kingdom', 'United States', 'Brazil', 'Germany', 'France', \
         'Russia', 'Turkey', 'Argentina', 'Colombia', 'Mexico', 'Ukraine', 'Peru', \
         'Indonesia', 'Iran', 'Poland', 'Spain'] #select country in countries
+    
+    #observeCountries=['Chile', 'Mongolia', 'Bahrain', 'Seychelles']
+    
     dfCountries = dfAll[dfAll.location.isin(observeCountries)]
     
     fileName = gSaveBasePath + 'World_peopleVaccined_topCasesCountries.png'
