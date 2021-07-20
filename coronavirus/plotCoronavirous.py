@@ -774,18 +774,19 @@ def plotCountriesFromOurWorld(csvpath=r'./OurWrold/'): #From ourworld data
         dfData = df.iloc[:top, :] #[df.columns.get_loc(columnLabel)]
         return dfData #dfData['location']
     
+
     saveCountriesInfoFromCsv(csvpath)
     
     casesFile = os.path.join(csvpath, 'cases.csv')
     df = readCsv(casesFile)
     plotWorldCases(df)
-    
+ 
     countriesPath = r'./dataCountry/'
     dfToday = getAllOurWorldNew(countriesPath)
     
     plotContinentCases(dfToday)
     plotCountriesCases(dfToday)
-    
+  
     #dfToday.set_index(["location"], inplace=True)  
     
     #plot country by time      
@@ -934,66 +935,141 @@ def plotConuntryCasesByTime(path, dfCountries, coloumnLabel, title, fileName):
     #plotCountryCasesStyle2(dfAll, coloumnLabel, title, fileName, days=days)
     
 def plotCountriesCases(df):
-    def getTopData(df,top,columnLabel, ascend=False):
+    def getTopData(df,top,columnLabel, binary=True, ascend=False):
         df = df.sort_values(by=[columnLabel], ascending=ascend)
         dfData = df.iloc[:top,[df.columns.get_loc(columnLabel)]]
-        return binaryDf(dfData,labelAdd=True)
+        
+        if binary:
+            dfData = binaryDf(dfData,labelAdd=True)
+        return dfData
     
     df.set_index(["location"], inplace=True)  
        
     dfWorld = df.loc['World']
     df = df[df['continent'].notnull()]  
+        
     #print(df.head())
     #print('df.columns=', df.columns)
     #print('dfWorld=', dfWorld)
     #total_cases new_cases total_deaths new_deaths
     top = 50
-    
+    kind='barh'
     plotAll=[]
     
     columnLabel = 'total_cases'
     dfData = getTopData(df, top, columnLabel)
-    title = 'Top '+str(top) + ' Confirmed(World: ' + str(int(dfWorld[columnLabel])) + ')' + getDateStr()    
+    title = 'World top '+str(top) + ' Confirmed(World: ' + str(int(dfWorld[columnLabel])) + ')' + getDateStr()    
     color='#1f77b4'
-    plotAll.append((columnLabel, dfData, title, color))
+    plotAll.append((columnLabel, dfData, kind, title, color))
     
     columnLabel = 'new_cases'
     dfData = getTopData(df, top, columnLabel)
-    title = 'Top '+str(top) + ' NewCase(World: ' + str(int(dfWorld[columnLabel])) + ')' + getDateStr()    
-    plotAll.append((columnLabel, dfData, title, color))
+    title = 'World top '+str(top) + ' NewCase(World: ' + str(int(dfWorld[columnLabel])) + ')' + getDateStr()    
+    plotAll.append((columnLabel, dfData, kind, title, color))
     
     columnLabel = 'total_cases_per_million'
     dfData = getTopData(df, top, columnLabel)
-    title = 'Top '+str(top) + ' Cases per Million(World: ' + str(int(dfWorld[columnLabel])) + ')' + getDateStr()    
-    plotAll.append((columnLabel, dfData, title, color))
+    title = 'World top '+str(top) + ' Cases per Million(World: ' + str(int(dfWorld[columnLabel])) + ')' + getDateStr()    
+    plotAll.append((columnLabel, dfData, kind, title, color))
     
     columnLabel = 'total_deaths'
     dfData = getTopData(df, top, columnLabel)
-    title = 'Top '+str(top) + ' Deaths(World: ' + str(int(dfWorld[columnLabel])) + ')' + getDateStr()    
+    title = 'World top '+str(top) + ' Deaths(World: ' + str(int(dfWorld[columnLabel])) + ')' + getDateStr()    
     color='r'
-    plotAll.append((columnLabel, dfData, title, color))
+    plotAll.append((columnLabel, dfData, kind, title, color))
     
     columnLabel = 'new_deaths'
     dfData = getTopData(df, top, columnLabel)
-    title = 'Top '+str(top) + ' New Deaths(World: ' + str(int(dfWorld[columnLabel])) + ')' + getDateStr()    
-    plotAll.append((columnLabel, dfData, title, color))
+    title = 'World top '+str(top) + ' New Deaths(World: ' + str(int(dfWorld[columnLabel])) + ')' + getDateStr()    
+    plotAll.append((columnLabel, dfData, kind, title, color))
     
     columnLabel = 'mortality'
     dfData = getTopData(df, top, columnLabel)
-    title = 'Top '+str(top) + ' Mortality(World: ' + str(dfWorld[columnLabel]) + ')' + getDateStr()    
-    plotAll.append((columnLabel, dfData, title, color))
+    title = 'World top '+str(top) + ' Mortality(World: ' + str(dfWorld[columnLabel]) + ')' + getDateStr()    
+    plotAll.append((columnLabel, dfData, kind, title, color))
     
     columnLabel = 'mortality'
     dfData = getTopData(df, top, columnLabel,ascend=True)
-    title = 'Lowest '+str(top) + ' Mortality(World: ' + str(dfWorld[columnLabel]) + ')' + getDateStr()    
-    plotAll.append((columnLabel, dfData, title, color))
+    title = 'World lowest '+str(top) + ' Mortality(World: ' + str(dfWorld[columnLabel]) + ')' + getDateStr()    
+    plotAll.append((columnLabel, dfData, kind, title, color))
     
     for i, value in enumerate(plotAll):
-        columnLabel, dfData, title, color = value
+        columnLabel, dfData, kind, title, color = value
         fileName = gSaveBasePath + str(i+1)+'.png'
-        plotData(dfData, title=title, kind='barh', y=[columnLabel], fName=fileName, \
+        plotData(dfData, title=title, kind=kind, y=[columnLabel], fName=fileName, \
             save=True, show=False, color=color, figsize=(8,5), left=0.3,bottom=0.1)
     
+    plt.show()
+    
+   
+    ####top continent countries######
+    continents = list(df.continent.unique())
+    print('continents=', continents, len(continents))
+    
+    top = 10
+    kind='bar' #['line','bar','barh','hist','box','kde','density','area']  
+    plotAll=[]
+    
+    for continent in continents:
+        #print('continent=', continent) #['Asia', 'Europe', 'Africa', 'North America', 'South America', 'Oceania']
+        dfCountries = df[df['continent'] == continent] 
+        
+        # columnLabel = 'total_cases'
+        # dfData = getTopData(dfCountries, top, columnLabel, binary=False)
+        # title = continent + ' top '+str(top) + ' Confirmed(World: ' + str(int(dfWorld[columnLabel])) + ')' + getDateStr()    
+        # color='#1f77b4'
+        # plotAll.append((columnLabel, dfData, kind, title, color))
+        
+        color='r'
+        columnLabel = 'new_cases'
+        dfData = getTopData(dfCountries, top, columnLabel, binary=False)
+        #title = continent + ' top '+str(top) + ' NewCase(World: ' + str(int(dfWorld[columnLabel])) + ')' + getDateStr()    
+        title = continent + ' top '+str(top) + ' NewCase'
+        plotAll.append((columnLabel, dfData, kind, title, color))
+        
+        # columnLabel = 'new_deaths'
+        # dfData = getTopData(dfCountries, top, columnLabel, binary=False)
+        # title = continent + ' top '+str(top) + ' New Deaths(World: ' + str(int(dfWorld[columnLabel])) + ')' + getDateStr()    
+        # plotAll.append((columnLabel, dfData, kind, title, color))
+        
+    print('plotAll len=', len(plotAll))
+
+    nrow=2
+    ncol=3
+    fig, axes = plt.subplots(nrow, ncol, figsize=(9,6))    
+    for i, value in enumerate(plotAll):
+        columnLabel, dfData, kind, title, color = value
+        
+        ax = dfData.plot(ax=axes[i//ncol, i%ncol], kind=kind, title=title, y=[columnLabel], color=color, grid=False, logy=False)
+        plt.setp(ax.get_xticklabels(), rotation=30, ha="right")
+        plt.subplots_adjust(left=None, bottom=None, right=None, top=None, wspace=None, hspace=None)
+        plt.tight_layout()
+        
+    fileName = gSaveBasePath + 'continentTopCountries_NewCases'+'.png'
+    plt.savefig(fileName)
+    
+    
+    plotAll=[]
+    for continent in continents:
+        dfCountries = df[df['continent'] == continent]         
+        color='r'
+        columnLabel = 'new_deaths'
+        dfData = getTopData(dfCountries, top, columnLabel, binary=False)
+        #title = continent + ' top '+str(top) + ' NewCase(World: ' + str(int(dfWorld[columnLabel])) + ')' + getDateStr()    
+        title = continent + ' top '+str(top) + ' New Deaths'
+        plotAll.append((columnLabel, dfData, kind, title, color))
+        
+    fig, axes = plt.subplots(nrow, ncol, figsize=(9,6))    
+    for i, value in enumerate(plotAll):
+        columnLabel, dfData, kind, title, color = value
+        
+        ax = dfData.plot(ax=axes[i//ncol, i%ncol], kind=kind, title=title, y=[columnLabel], color=color, grid=False, logy=False)
+        plt.setp(ax.get_xticklabels(), rotation=30, ha="right")
+        plt.subplots_adjust(left=None, bottom=None, right=None, top=None, wspace=None, hspace=None)
+        plt.tight_layout()
+        
+    fileName = gSaveBasePath + 'continentTopCountries_NewDeaths'+'.png'
+    plt.savefig(fileName)
     plt.show()
     
 def plotWorldCases(df): 

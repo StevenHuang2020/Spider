@@ -73,7 +73,8 @@ Updated to adapt the new google page.<br/>
 |<img src="images/3.png" width="320" height="240" />|<img src="images/4.png" width="320" height="240" />|
 |<img src="images/5.png" width="320" height="240" />|<img src="images/6.png" width="320" height="240" />|
 |<img src="images/7.png" width="320" height="240" />|<img src="images/World_casesContinent.png" width="320" height="240" />|
-|<img src="images/World_newCasesContinent.png" width="320" height="240" />||
+|<img src="images/World_newCasesContinent.png" width="320" height="240" />|<img src="images/continentTopCountries_NewCases.png" width="320" height="240" />|
+|<img src="images/continentTopCountries_NewDeaths.png" width="320" height="240" />||
 
 <br/>
 
