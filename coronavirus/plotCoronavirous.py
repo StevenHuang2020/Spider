@@ -49,9 +49,9 @@ def plotData(df, title, kind='line', y=None, fName='', logy=False, save=True, sh
     
     #fontsize = 4
     if figsize:
-        ax = df.plot(kind=kind, title=title, y=y, color=color, grid=grid, logy=logy, figsize=figsize)
+        ax = df.plot(kind=kind, title=title, y=y, color=color, grid=grid, logy=logy, figsize=figsize, xlabel='', ylabel='')
     else:
-        ax = df.plot(kind=kind, title=title, y=y, color=color, grid=grid, logy=logy)
+        ax = df.plot(kind=kind, title=title, y=y, color=color, grid=grid, logy=logy, xlabel='', ylabel='')
         
     plt.setp(ax.get_xticklabels(), rotation=30, ha="right")
     #plt.setp(ax.get_yticklabels()) #fontsize=fontsize
@@ -779,12 +779,15 @@ def plotCountriesFromOurWorld(csvpath=r'./OurWrold/'): #From ourworld data
     casesFile = os.path.join(csvpath, 'cases.csv')
     df = readCsv(casesFile)
     plotWorldCases(df)
-
+    
     countriesPath = r'./dataCountry/'
     dfToday = getAllOurWorldNew(countriesPath)
     
+    dfToday.set_index(["location"], inplace=True)  
+    
     plotContinentCases(dfToday)
     plotCountriesCases(dfToday)
+    plotContinentCountriesCases(dfToday)
 
     #dfToday.set_index(["location"], inplace=True)  
     
@@ -933,8 +936,7 @@ def plotConuntryCasesByTime(path, dfCountries, coloumnLabel, title, fileName):
     plotCountryCasesStyle1(dfAll, coloumnLabel, title, fileName, days=days)
     #plotCountryCasesStyle2(dfAll, coloumnLabel, title, fileName, days=days)
     
-def plotCountriesCases(df):
-    def getTopData(df,top,columnLabel, binary=True, ascend=False):
+def getTopData(df,top,columnLabel, binary=True, ascend=False):
         df = df.sort_values(by=[columnLabel], ascending=ascend)
         dfData = df.iloc[:top,[df.columns.get_loc(columnLabel)]]
         
@@ -942,7 +944,8 @@ def plotCountriesCases(df):
             dfData = binaryDf(dfData,labelAdd=True)
         return dfData
     
-    df.set_index(["location"], inplace=True)  
+def plotCountriesCases(df):
+    #df.set_index(["location"], inplace=True)  
        
     dfWorld = df.loc['World']
     df = df[df['continent'].notnull()]  
@@ -997,11 +1000,15 @@ def plotCountriesCases(df):
         fileName = gSaveBasePath + str(i+1)+'.png'
         plotData(dfData, title=title, kind=kind, y=[columnLabel], fName=fileName, \
             save=True, show=False, color=color, figsize=(8,5), left=0.3,bottom=0.1)
-    
     plt.show()
 
-   
-    ####top continent countries######
+    
+def plotContinentCountriesCases(df):    
+    #df.set_index(["location"], inplace=True)  
+       
+    dfWorld = df.loc['World']
+    df = df[df['continent'].notnull()]  
+        
     continents = list(df.continent.unique())
     print('continents=', continents, len(continents))
     
@@ -1030,7 +1037,8 @@ def plotCountriesCases(df):
     for i, value in enumerate(plotAll):
         columnLabel, dfData, kind, title, color = value
         
-        ax = dfData.plot(ax=axes[i//ncol, i%ncol], kind=kind, title=title, y=[columnLabel], color=color, grid=False, logy=False)
+        ax = dfData.plot(ax=axes[i//ncol, i%ncol], kind=kind, title=title, y=[columnLabel], \
+            color=color, grid=False, logy=False, legend=False, xlabel='', ylabel='')
         plt.setp(ax.get_xticklabels(), rotation=30, ha="right")
         plt.subplots_adjust(left=None, bottom=None, right=None, top=None, wspace=None, hspace=None)
         plt.tight_layout()
@@ -1038,7 +1046,7 @@ def plotCountriesCases(df):
     fileName = gSaveBasePath + 'continentTopCountries_NewCases'+'.png'
     plt.savefig(fileName)
     
-    
+
     plotAll=[]
     columnLabel = 'new_deaths'
     for continent in continents:
@@ -1056,7 +1064,8 @@ def plotCountriesCases(df):
     for i, value in enumerate(plotAll):
         columnLabel, dfData, kind, title, color = value
         
-        ax = dfData.plot(ax=axes[i//ncol, i%ncol], kind=kind, title=title, y=[columnLabel], color=color, grid=False, logy=False)
+        ax = dfData.plot(ax=axes[i//ncol, i%ncol], kind=kind, title=title, y=[columnLabel], \
+            color=color, grid=False, logy=False, legend=False, xlabel='', ylabel='')
         plt.setp(ax.get_xticklabels(), rotation=30, ha="right")
         plt.subplots_adjust(left=None, bottom=None, right=None, top=None, wspace=None, hspace=None)
         plt.tight_layout()
@@ -1133,7 +1142,7 @@ def plotContinentCases(df):
             #plt.bar(y1.index, y1, width=0.4) #bottom=0, color=color
             #plt.bar(y2.index, y2, width=0.4) #bottom=0, color=color
             ax = dfContinent.plot(kind='barh', title=title, y=y, color=color, \
-                figsize=(8,5)) #grid=True, logy=True
+                figsize=(8,5), ylabel='', xlabel='') #grid=True, logy=True
             #ax.get_xaxis().set_visible(False)
             ax.get_xaxis().tick_top()
             plt.table(cellText=dfContinentTable.values,
@@ -1150,7 +1159,7 @@ def plotContinentCases(df):
             #print('dfContinentTable=\n', dfContinentTable)
         
     dfContinent = df[df['continent'].isnull()]  
-    dfContinent.set_index(["location"], inplace=True)  
+    #dfContinent.set_index(["location"], inplace=True)  
     #print('dfContinent=\n', dfContinent)
     
     worldTotalCases = int(dfContinent.loc['World']['total_cases'])

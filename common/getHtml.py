@@ -22,28 +22,17 @@ def getUrlByUrllib(url):
         
 def getUrlByRequest(url):
     if 0:
-        #url = 'https://api.github.com/some/endpoint'
-        #headers = {'user-agent': 'my-app/0.0.1'}
-        #r = requests.get(url, headers=headers)
-
-        #payload = {'key1': 'value1', 'key2': 'value2'}
-        #r = requests.get("http://httpbin.org/get", params=payload)
-        headers = userAgentHeaders()
-        print(headers)
-        r = requests.get(url,headers=headers)
-        print(r.status_code)
-        return r.text
-        
-    try:
-        if 0:
-            headers = requests.utils.default_headers()
-            print('headers=',headers)
-            headers.update(
-            {
-            'User-Agent':GetUA()
-            })
-        
-        r = requests.get(url, timeout=30)
+        headers = requests.utils.default_headers()
+        print('headers=',headers)
+        headers.update(
+        {
+        'User-Agent':GetUA()
+        })
+    headers = userAgentHeaders()
+    print(headers)
+                
+    try:        
+        r = requests.get(url, timeout=30, ) #headers=headers
         if r.status_code != 200:
             print(r.status_code)
         # 如果状态码不是200 则应发HTTOError异常
@@ -76,7 +65,7 @@ def downWebFile(url,dst):
     if 0:
         wget.download(url, out=dst)
     else:
-        print('Beginning file download with requests...')
+        print('Beginning file download,url =',url,'dst =',dst)
         r = requests.get(url)
         # # Retrieve HTTP meta-data
         statusCode = r.status_code
