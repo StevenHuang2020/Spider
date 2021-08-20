@@ -362,10 +362,12 @@ def main():
     createPath(vaccCountryPath)
     
     download = True
+    createPath(path)
+    file = os.path.join(path, 'owid-covid-data.csv')
     if download:
-        dataAllFile = downloadOurWorldData(path)
-        #dataAllFile = os.path.join(path, 'owid-covid-data.csv')
-        getVaccinesFile(dataAllFile, vaccineFile)
+        downWebFile(gCovidCsv, file)
+       
+    getVaccinesFile(file, vaccineFile)
     
     df = readCsv(vaccineFile)
     saveCountryVaccData(df)
